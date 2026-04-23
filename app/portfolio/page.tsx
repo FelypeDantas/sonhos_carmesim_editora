@@ -34,7 +34,7 @@ export default function PortfolioPage() {
   return (
     <main className="min-h-screen px-6 py-20">
       <h1 className="text-3xl md:text-5xl font-bold mb-12 text-center">
-        Portfólio
+        Exemplares de capa
       </h1>
 
       {/* GRID */}
