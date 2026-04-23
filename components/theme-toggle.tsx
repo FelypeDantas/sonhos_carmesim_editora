@@ -94,7 +94,7 @@ export function ThemeToggle() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.25 }}
         >
-          {isDark ? "Dark Ritual" : "Modo Claro"}
+          {isDark ? "Modo Sombrio" : "Modo Claro"}
         </motion.span>
       </span>
     </motion.button>
