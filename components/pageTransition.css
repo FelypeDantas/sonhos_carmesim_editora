@@ -1,0 +1,221 @@
+:root {
+  /* =========================
+     ⏱️ MOTION CORE
+  ========================= */
+  --t-duration: 750ms;
+  --t-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* direção */
+  --t-direction: 1; /* 1 forward | -1 back */
+
+  /* inércia (quanto o conteúdo “arrasta”) */
+  --t-inertia: 0px;
+
+  /* profundidade global */
+  --t-depth: 0px;
+
+  /* blur dinâmico */
+  --t-blur: 0px;
+
+  /* rotação de página */
+  --t-rotate: 0deg;
+
+  /* =========================
+     📄 SURFACE STACK
+  ========================= */
+  --s-0: #fff;
+  --s-1: #f3f3f3;
+  --s-2: #e8e8e8;
+
+  --s-d0: #0a0a0a;
+  --s-d1: #121212;
+  --s-d2: #1c1c1c;
+
+  /* =========================
+     🌫️ DEPTH SHADOWS
+  ========================= */
+  --e-xs: rgba(0, 0, 0, 0.08);
+  --e-sm: rgba(0, 0, 0, 0.15);
+  --e-md: rgba(0, 0, 0, 0.25);
+
+  --accent: rgba(255, 0, 50, 0.18);
+}
+
+/* =========================
+   📖 BOOK STAGE (PERSPECTIVE)
+========================= */
+body {
+  perspective: 1400px;
+  perspective-origin: center;
+}
+
+/* =========================
+   🎞️ MAIN TRANSITION SHEET
+========================= */
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+
+  /* origem dinâmica da página */
+  transform-origin: calc((var(--t-direction) + 1) * 50%) center;
+
+  /* estado base */
+  transform:
+    translateX(var(--t-inertia))
+    rotateY(var(--t-rotate))
+    scaleX(0);
+
+  filter: blur(var(--t-blur));
+
+  transition:
+    transform var(--t-duration) var(--t-ease-out),
+    filter var(--t-duration) ease;
+
+  /* 📄 paper */
+  background: linear-gradient(
+    90deg,
+    var(--s-0) 0%,
+    var(--s-1) 18%,
+    var(--s-2) 38%,
+    var(--s-0) 70%,
+    var(--s-0) 100%
+  );
+
+  box-shadow:
+    inset -80px 0 140px var(--e-md),
+    inset -10px 0 40px var(--e-sm),
+    inset 0 0 50px var(--e-xs);
+}
+
+/* ativo */
+.transition-overlay.active {
+  transform:
+    translateX(var(--t-inertia))
+    rotateY(var(--t-rotate))
+    scaleX(1);
+
+  --t-blur: 3px;
+}
+
+/* =========================
+   📖 PAGE FOLD (3D EDGE)
+========================= */
+.transition-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 110px;
+  height: 100%;
+
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.35),
+    transparent
+  );
+
+  opacity: 0;
+  transition: opacity var(--t-duration) ease;
+}
+
+.transition-overlay.active::after {
+  opacity: 1;
+}
+
+/* =========================
+   🌫️ TEXTURE LAYER
+========================= */
+.transition-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+
+  background: radial-gradient(
+    circle at 30% 50%,
+    rgba(0, 0, 0, 0.05),
+    transparent 60%
+  );
+}
+
+/* =========================
+   🌀 PARALLAX LAYERS
+========================= */
+
+/* fundo distante */
+.layer-back {
+  transform: translateZ(-200px)
+             translateX(calc(var(--t-direction) * var(--t-depth)));
+  transition: transform var(--t-duration) var(--t-ease-out);
+}
+
+/* meio termo */
+.layer-mid {
+  transform: translateZ(-80px)
+             translateX(calc(var(--t-direction) * (var(--t-depth) * 0.6)));
+  transition: transform var(--t-duration) var(--t-ease-out);
+}
+
+/* frente (conteúdo principal) */
+.layer-front {
+  transform: translateZ(0)
+             translateX(calc(var(--t-direction) * (var(--t-depth) * 0.3)));
+  transition: transform var(--t-duration) var(--t-ease-out);
+}
+
+/* =========================
+   📄 CONTENT INERTIA
+========================= */
+.page-content {
+  position: relative;
+  z-index: 1;
+
+  transition:
+    transform var(--t-duration) var(--t-ease-out),
+    opacity var(--t-duration) ease;
+}
+
+/* inércia viva */
+.transition-overlay.active ~ .page-content {
+  opacity: 0.85;
+  transform:
+    translateX(calc(var(--t-direction) * -10px))
+    translateZ(-30px);
+}
+
+/* =========================
+   🌑 DARK MODE
+========================= */
+.dark .transition-overlay {
+  background: linear-gradient(
+    90deg,
+    var(--s-d0) 0%,
+    var(--s-d1) 25%,
+    var(--s-d2) 50%,
+    var(--s-d0) 80%,
+    #000 100%
+  );
+
+  box-shadow:
+    inset -80px 0 140px rgba(0, 0, 0, 0.9),
+    inset -10px 0 50px rgba(0, 0, 0, 0.7),
+    inset 0 0 70px var(--accent);
+}
+
+.dark .transition-overlay::after {
+  background: linear-gradient(
+    to left,
+    var(--accent),
+    transparent
+  );
+}
