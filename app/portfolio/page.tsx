@@ -26,6 +26,13 @@ const books: Book[] = [
     synopsis:
       "Lutyah nasceu entre as chamas, moldada por Lúcifer e pela glória do caos. Mas o que o inferno chamou de “criação perfeita”, ela chama de prisão. Determinada a renegar o pai e tudo o que ele representa, Lutyah parte em uma jornada que desafia o equilíbrio dos mundos: reunir os fragmentos da antiga Casa, artefatos que, quando unidos, podem erguer um novo lar. Um refúgio onde nenhuma alma será escrava do Céu ou do Abismo. Ao seu lado está Mel, sua irmã e cúmplice, e o anjo que traiu a luz para servi-la. Entre eles, não há medo, apenas um amor que o próprio universo se recusa a compreender: ardente, leal e tão destrutivo quanto belo. Mas cada fragmento está guardado por forças que nenhum ser deveria desafiar. Deuses do Olimpo, hostes celestiais e demônios antigos se erguem contra ela, temendo o que acontecerá se a filha de Lúcifer conseguir o que busca. Entre a lâmina e o fogo, entre o desejo e a ruína, Lutyah descobrirá que a verdadeira guerra não é contra os deuses, mas sim contra as correntes que tentam definir quem ela deve ser. Ela não nasceu para governar o inferno. Nasceu para destruí-lo. E, se for preciso, para incendiar o paraíso também.",
   },
+  {
+    id: 3,
+    title: "4 e meio: Enquanto o mundo ainda não acabou",
+    cover: "/covers/4eMeio.jpeg",
+    synopsis:
+      "Essa história ainda não possui uma sinopse completa.",
+  }
 ];
 
 export default function PortfolioPage() {
