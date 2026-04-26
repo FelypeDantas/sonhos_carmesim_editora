@@ -28,8 +28,8 @@ const books: Book[] = [
   },
   {
     id: 3,
-    title: "4 e meio: Enquanto o mundo ainda não acabou",
-    cover: "/covers/4eMeio.png",
+    title: "4 e Meio: Enquanto o mundo ainda não acabou",
+    cover: "/covers/4emeio.png",
     synopsis:
       "Essa história ainda não possui uma sinopse completa.",
   }
