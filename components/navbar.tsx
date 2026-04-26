@@ -29,7 +29,6 @@ export function Navbar() {
   return (
     <nav
       className="
-        ignore-system-dark
         fixed top-0 w-full z-50
         backdrop-blur-md
         border-b border-black/10 dark:border-white/10
