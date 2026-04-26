@@ -31,21 +31,18 @@ export function Navbar() {
       className="
         fixed top-0 w-full z-50
         backdrop-blur-md
-        border-b border-black/10 dark:border-black/10
-        bg-white/90 dark:bg-gray-100
+        border-b border-black/10
+        bg-white/90
         text-black
         transition-colors duration-300
       "
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        
+
         {/* 🌹 Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-3 group"
-        >
+        <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/logo.png" // 👈 coloque sua logo na pasta /public
+            src="/logo.png"
             alt="Sonhos Carmesim"
             width={42}
             height={42}
@@ -55,14 +52,13 @@ export function Navbar() {
               drop-shadow-[0_0_6px_rgba(0,0,0,0.35)]
               transition-transform duration-300
               group-hover:scale-105
-              dark:drop-shadow-[0_0_12px_rgba(255,77,166,0.25)]
             "
           />
 
           <span
             className="
               font-bold text-lg md:text-xl tracking-widest
-              text-black dark:text-white
+              text-black
               group-hover:text-red-500
               transition-colors duration-300
             "
@@ -88,7 +84,7 @@ export function Navbar() {
                     ${
                       isActive
                         ? "text-red-500"
-                        : "text-black/70 dark:text-white/70 group-hover:text-red-400"
+                        : "text-black/70 hover:text-black"
                     }
                   `}
                 >
@@ -107,16 +103,13 @@ export function Navbar() {
           })}
         </div>
 
-        {/* ⚙️ Desktop Actions */}
+        {/* ⚙️ Actions */}
         <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
         </div>
 
-        {/* 🍔 Mobile Button */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden text-black dark:text-white"
-        >
+        {/* 🍔 Mobile */}
+        <button onClick={toggleMenu} className="md:hidden text-black">
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -124,18 +117,12 @@ export function Navbar() {
       {/* 📱 Mobile Menu */}
       <div
         className={`
-          md:hidden
-          overflow-hidden
-          transition-all duration-500
-          ${
-            open
-              ? "max-h-96 opacity-100"
-              : "max-h-0 opacity-0"
-          }
+          md:hidden overflow-hidden transition-all duration-500
+          ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
         `}
       >
         <div className="px-6 pb-6 flex flex-col gap-6">
-          
+
           {links.map((link) => {
             const isActive = pathname === link.href;
 
@@ -149,7 +136,7 @@ export function Navbar() {
                   ${
                     isActive
                       ? "text-red-500"
-                      : "text-black/80 dark:text-white/80 hover:text-red-400"
+                      : "text-black/80 hover:text-black"
                   }
                 `}
               >
@@ -158,8 +145,8 @@ export function Navbar() {
             );
           })}
 
-          {/* 🌗 Theme no mobile */}
-          <div className="pt-2 border-t border-black/10 dark:border-white/10">
+          {/* 🌗 Theme */}
+          <div className="pt-2 border-t border-black/10">
             <ThemeToggle />
           </div>
         </div>
