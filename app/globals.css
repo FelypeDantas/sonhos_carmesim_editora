@@ -187,4 +187,16 @@ a:hover {
     padding: 10px 20px;
     border-radius: 8px;
   }
+
+  .navbar {
+    background: rgba(10, 10, 15, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .navbar .logo {
+    filter: drop-shadow(0 0 10px rgba(255, 77, 166, 0.25));
+  }
+
 }
