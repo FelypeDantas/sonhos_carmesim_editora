@@ -38,6 +38,7 @@ export function ThemeToggle() {
       whileTap={{ scale: 0.94 }}
       whileHover={{ scale: 1.04 }}
       className={`
+        ignore-system-dark
         group relative px-5 py-2 rounded-xl border
         backdrop-blur-md overflow-hidden
         transition-colors duration-300
