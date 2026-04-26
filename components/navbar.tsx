@@ -29,6 +29,7 @@ export function Navbar() {
   return (
     <nav
       className="
+        ignore-system-dark
         fixed top-0 w-full z-50
         backdrop-blur-md
         border-b border-black/10 dark:border-white/10
@@ -59,10 +60,11 @@ export function Navbar() {
 
           <span
             className="
-              font-bold text-lg md:text-xl tracking-widest
+              font-bold text-sm md:text-xl tracking-widest
               text-black dark:text-white
               group-hover:text-red-500
               transition-colors duration-300
+              whitespace-nowrap
             "
           >
             SONHOS CARMESIM
