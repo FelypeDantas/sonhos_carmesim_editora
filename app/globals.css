@@ -173,3 +173,18 @@ a:hover {
     transition: none;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .ignore-system-dark {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #1a0000;
+    color: #fff;
+    border: 1px solid #ff4d6d;
+    padding: 10px 20px;
+    border-radius: 8px;
+  }
+}
