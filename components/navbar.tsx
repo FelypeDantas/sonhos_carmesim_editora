@@ -31,8 +31,9 @@ export function Navbar() {
       className="
         fixed top-0 w-full z-50
         backdrop-blur-md
-        border-b border-black/10 dark:border-white/10
-        bg-white/70 dark:bg-zinc-950
+        border-b border-black/10 dark:border-black/10
+        bg-white/90 dark:bg-gray-100
+        text-black
         transition-colors duration-300
       "
     >
