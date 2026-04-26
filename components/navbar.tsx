@@ -59,11 +59,10 @@ export function Navbar() {
 
           <span
             className="
-              font-bold text-sm md:text-xl tracking-widest
+              font-bold text-lg md:text-xl tracking-widest
               text-black dark:text-white
               group-hover:text-red-500
               transition-colors duration-300
-              whitespace-nowrap
             "
           >
             SONHOS CARMESIM
