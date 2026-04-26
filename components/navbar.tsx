@@ -32,11 +32,8 @@ export function Navbar() {
         fixed top-0 w-full z-50
         backdrop-blur-md
         border-b border-black/10 dark:border-white/10
-        bg-white/70 dark:bg-black/40
-        transition-colors duration-500
-
-      dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)]
-     dark:bg-gradient-to-b dark:from-black/60 dark:to-black/30
+        bg-white/70 dark:bg-zinc-950
+        transition-colors duration-300
       "
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
