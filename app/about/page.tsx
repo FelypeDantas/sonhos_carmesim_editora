@@ -48,7 +48,7 @@ export default function AboutPage() {
 
         {/* 🌄 imagem */}
         <div
-          className="absolute inset-0 bg-[url('/about-bg.jpg')] bg-cover bg-center scale-105 opacity-40"
+          className="absolute inset-0 bg-[url('/about-bg.png')] bg-cover bg-center scale-105 opacity-40"
           aria-hidden="true"
         />
 
