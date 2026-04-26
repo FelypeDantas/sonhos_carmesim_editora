@@ -16,7 +16,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-white text-black dark:bg-black dark:text-white transition-colors duration-700">
+    <main className="ignore-system-dark relative min-h-screen overflow-hidden bg-white text-black dark:bg-black dark:text-white transition-colors duration-700">
 
       {/* 🌌 BACKGROUND */}
       <div className="absolute inset-0 z-0 pointer-events-none">
