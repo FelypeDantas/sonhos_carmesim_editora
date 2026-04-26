@@ -51,7 +51,6 @@ export function Navbar() {
             height={42}
             priority
             className="
-              ignore-system-dark
               object-contain
               drop-shadow-[0_0_6px_rgba(0,0,0,0.35)]
               transition-transform duration-300
