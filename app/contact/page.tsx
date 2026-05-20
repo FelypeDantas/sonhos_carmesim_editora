@@ -21,6 +21,13 @@ type FormState = {
   arquivo: File | null;
 };
 
+type FieldProps = {
+  label: string;
+  name: string;
+  value: string;
+  placeholder?: string;
+};
+
 const INITIAL_STATE: FormState = {
   nome: "",
   email: "",
@@ -34,13 +41,38 @@ const INITIAL_STATE: FormState = {
   arquivo: null,
 };
 
+const INPUT_STYLES = `
+  w-full rounded-2xl border
+  border-black/10 dark:border-white/10
+
+  bg-white/80 dark:bg-zinc-950/80
+  backdrop-blur-xl
+
+  text-black dark:text-white
+  placeholder:text-black/40 dark:placeholder:text-white/40
+
+  px-4 py-3
+
+  outline-none
+  transition-all duration-300
+
+  focus:border-rose-500/40
+  focus:ring-4
+  focus:ring-rose-500/10
+
+  hover:border-black/20
+  dark:hover:border-white/20
+`;
+
 /* =========================================================
    🌹 PAGE
 ========================================================= */
 
 export default function ContactPage() {
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
+
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   /* =========================================================
@@ -94,6 +126,10 @@ export default function ContactPage() {
      ✏️ CHANGE
   ========================================================= */
 
+  const clearError = () => {
+    if (error) setError(null);
+  };
+
   const handleChange = useCallback(
     (
       e:
@@ -108,7 +144,7 @@ export default function ContactPage() {
         [name]: value,
       }));
 
-      if (error) setError(null);
+      clearError();
     },
     [error]
   );
@@ -122,7 +158,7 @@ export default function ContactPage() {
         arquivo: file,
       }));
 
-      if (error) setError(null);
+      clearError();
     },
     [error]
   );
@@ -138,17 +174,25 @@ export default function ContactPage() {
 📧 *Email:* ${form.email}
 
 📚 *Gênero do livro:* ${form.genero}
+
 🛠️ *Status da obra:* ${form.statusLivro}
+
 📄 *Quantidade de páginas/palavras:* ${form.paginas}
+
 📦 *Formato desejado:* ${form.formato}
-✍️ *Já passou por revisão?* ${form.revisado}
-🎨 *Possui capa?* ${form.possuiCapa}
+
+✍️ *Já passou por revisão profissional?*
+${form.revisado}
+
+🎨 *Possui capa?*
+${form.possuiCapa}
 
 🎯 *Objetivo com a publicação:*
 ${form.objetivo}
 
-📎 Arquivo enviado:
-${form.arquivo?.name || "Não enviado"}`;
+📎 *Arquivo enviado:*
+${form.arquivo?.name || "Não enviado"}
+`;
   }, [form]);
 
   /* =========================================================
@@ -171,14 +215,6 @@ ${form.arquivo?.name || "Não enviado"}`;
 
         const phone = "553182221360";
 
-        /**
-         * Aqui você pode futuramente:
-         * - enviar arquivo para Supabase Storage
-         * - Cloudinary
-         * - UploadThing
-         * - Firebase Storage
-         */
-
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(
           whatsappMessage
         )}`;
@@ -200,40 +236,108 @@ ${form.arquivo?.name || "Não enviado"}`;
   ========================================================= */
 
   return (
-    <main className="min-h-screen px-6 py-20">
-      <section className="mx-auto max-w-3xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Atendimento Editorial
+    <main
+      className="
+        min-h-screen
+        bg-gradient-to-b
+        from-white
+        via-zinc-50
+        to-zinc-100
+
+        dark:from-black
+        dark:via-zinc-950
+        dark:to-black
+
+        px-6 py-20
+      "
+    >
+      <section className="mx-auto max-w-4xl">
+        {/* HERO */}
+        <div className="mb-14 text-center">
+          <div
+            className="
+              inline-flex items-center gap-2
+              rounded-full
+              border border-rose-500/20
+              bg-rose-500/10
+              px-4 py-2
+
+              text-sm text-rose-500
+            "
+          >
+            🌹 Atendimento Editorial
+          </div>
+
+          <h1
+            className="
+              mt-6
+              text-4xl font-black tracking-tight
+              text-black dark:text-white
+
+              md:text-6xl
+            "
+          >
+            Vamos publicar sua obra.
           </h1>
 
-          <p className="mt-4 text-black/60 dark:text-white/60">
-            Envie as informações da sua obra para agilizar a análise editorial.
+          <p
+            className="
+              mx-auto mt-5 max-w-2xl
+              text-base leading-relaxed
+              text-black/60 dark:text-white/60
+            "
+          >
+            Preencha as informações abaixo para agilizar
+            a avaliação editorial da sua obra.
           </p>
         </div>
 
+        {/* FORM */}
         <form
           onSubmit={handleSubmit}
           className="
-            space-y-6
-            rounded-3xl
-            border border-black/10 dark:border-white/10
-            bg-black/5 dark:bg-white/5
-            backdrop-blur-xl
-            p-8
+            space-y-7
+
+            rounded-[2rem]
+
+            border border-black/10
+            dark:border-white/10
+
+            bg-white/70
+            dark:bg-zinc-900/40
+
+            p-8 md:p-10
+
+            shadow-2xl
+            shadow-black/5
+
+            backdrop-blur-2xl
           "
         >
+          {/* ERROR */}
           {error && (
-            <div className="rounded-xl bg-red-500/10 p-4 text-sm text-red-500">
+            <div
+              className="
+                rounded-2xl
+                border border-red-500/20
+                bg-red-500/10
+                px-4 py-4
+
+                text-sm font-medium
+                text-red-500
+              "
+            >
               {error}
             </div>
           )}
 
+          {/* GRID */}
           <div className="grid gap-6 md:grid-cols-2">
             <Input
               label="Seu nome"
               name="nome"
               value={form.nome}
+              placeholder="Ex: Ana Clara"
               onChange={handleChange}
             />
 
@@ -242,6 +346,7 @@ ${form.arquivo?.name || "Não enviado"}`;
               name="email"
               type="email"
               value={form.email}
+              placeholder="voce@email.com"
               onChange={handleChange}
             />
           </div>
@@ -250,6 +355,7 @@ ${form.arquivo?.name || "Não enviado"}`;
             label="Qual é o gênero do livro?"
             name="genero"
             value={form.genero}
+            placeholder="Fantasia, Romance, Suspense..."
             onChange={handleChange}
           />
 
@@ -269,6 +375,7 @@ ${form.arquivo?.name || "Não enviado"}`;
               label="Quantidade de páginas ou palavras"
               name="paginas"
               value={form.paginas}
+              placeholder="Ex: 320 páginas"
               onChange={handleChange}
             />
           </div>
@@ -313,45 +420,133 @@ ${form.arquivo?.name || "Não enviado"}`;
             label="Qual seu objetivo com a publicação?"
             name="objetivo"
             value={form.objetivo}
+            placeholder="Conte um pouco sobre sua meta com o livro..."
             onChange={handleChange}
           />
 
-          {/* 📎 FILE */}
-          <div className="space-y-2">
-            <label className="text-sm text-black/60 dark:text-white/60">
+          {/* FILE */}
+          <div className="space-y-3">
+            <label
+              className="
+                text-sm font-medium
+                text-black/70 dark:text-white/70
+              "
+            >
               Arquivo editável da obra
             </label>
 
-            <input
-              type="file"
-              accept=".doc,.docx,.odt"
-              onChange={handleFile}
+            <div
               className="
-                w-full rounded-xl border border-dashed
-                border-black/20 dark:border-white/20
-                p-4 text-sm
-              "
-            />
+                rounded-2xl border border-dashed
+                border-black/15 dark:border-white/15
 
-            <p className="text-xs text-black/50 dark:text-white/50">
-              Envie um arquivo Word, DOCX ou ODT.
-            </p>
+                bg-white/50 dark:bg-zinc-950/40
+
+                p-6
+
+                transition-all duration-300
+
+                hover:border-rose-500/30
+              "
+            >
+              <input
+                type="file"
+                accept=".doc,.docx,.odt"
+                onChange={handleFile}
+                className="
+                  w-full
+
+                  text-sm
+                  text-black dark:text-white
+
+                  file:mr-4
+                  file:rounded-xl
+                  file:border-0
+
+                  file:bg-rose-500
+                  file:px-4
+                  file:py-2
+
+                  file:text-sm
+                  file:font-semibold
+                  file:text-white
+
+                  hover:file:bg-rose-400
+                "
+              />
+
+              <p
+                className="
+                  mt-3 text-xs
+                  text-black/50 dark:text-white/50
+                "
+              >
+                Aceitamos arquivos .DOC, .DOCX e .ODT
+              </p>
+
+              {form.arquivo && (
+                <div
+                  className="
+                    mt-4 rounded-xl
+                    border border-emerald-500/20
+                    bg-emerald-500/10
+                    px-4 py-3
+
+                    text-sm
+                    text-emerald-500
+                  "
+                >
+                  📎 {form.arquivo.name}
+                </div>
+              )}
+            </div>
           </div>
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
             className="
-              w-full rounded-xl bg-green-500 py-4
-              font-semibold text-black
+              group relative overflow-hidden
+
+              w-full rounded-2xl
+
+              bg-gradient-to-r
+              from-rose-500
+              to-pink-500
+
+              px-6 py-4
+
+              font-bold
+              text-white
+
               transition-all duration-300
-              hover:bg-green-400
-              disabled:opacity-50
+
+              hover:scale-[1.01]
+              hover:shadow-2xl
+              hover:shadow-rose-500/20
+
+              disabled:cursor-not-allowed
+              disabled:opacity-60
             "
           >
-            {loading
-              ? "Enviando..."
-              : "Enviar atendimento via WhatsApp 💬"}
+            <span className="relative z-10">
+              {loading
+                ? "Enviando..."
+                : "Enviar atendimento 💬"}
+            </span>
+
+            <div
+              className="
+                absolute inset-0
+                translate-y-full
+                bg-white/10
+
+                transition-transform duration-300
+
+                group-hover:translate-y-0
+              "
+            />
           </button>
         </form>
       </section>
@@ -363,10 +558,7 @@ ${form.arquivo?.name || "Não enviado"}`;
    🧩 COMPONENTS
 ========================================================= */
 
-type InputProps = {
-  label: string;
-  name: string;
-  value: string;
+type InputProps = FieldProps & {
   type?: string;
   onChange: (
     e: React.ChangeEvent<HTMLInputElement>
@@ -377,12 +569,18 @@ function Input({
   label,
   name,
   value,
+  placeholder,
   type = "text",
   onChange,
 }: InputProps) {
   return (
-    <div className="space-y-2">
-      <label className="text-sm text-black/60 dark:text-white/60">
+    <div className="space-y-3">
+      <label
+        className="
+          text-sm font-medium
+          text-black/70 dark:text-white/70
+        "
+      >
         {label}
       </label>
 
@@ -390,25 +588,15 @@ function Input({
         type={type}
         name={name}
         value={value}
+        placeholder={placeholder}
         onChange={onChange}
-        className="
-          w-full rounded-xl border
-          border-black/10 dark:border-white/10
-          bg-white dark:bg-zinc-900
-          p-3
-          outline-none
-          transition-all duration-300
-          focus:ring-2 focus:ring-rose-500/30
-        "
+        className={INPUT_STYLES}
       />
     </div>
   );
 }
 
-type TextareaProps = {
-  label: string;
-  name: string;
-  value: string;
+type TextareaProps = FieldProps & {
   onChange: (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
@@ -418,28 +606,27 @@ function Textarea({
   label,
   name,
   value,
+  placeholder,
   onChange,
 }: TextareaProps) {
   return (
-    <div className="space-y-2">
-      <label className="text-sm text-black/60 dark:text-white/60">
+    <div className="space-y-3">
+      <label
+        className="
+          text-sm font-medium
+          text-black/70 dark:text-white/70
+        "
+      >
         {label}
       </label>
 
       <textarea
-        rows={5}
+        rows={6}
         name={name}
         value={value}
+        placeholder={placeholder}
         onChange={onChange}
-        className="
-          w-full resize-none rounded-xl border
-          border-black/10 dark:border-white/10
-          bg-white dark:bg-zinc-900
-          p-3
-          outline-none
-          transition-all duration-300
-          focus:ring-2 focus:ring-rose-500/30
-        "
+        className={`${INPUT_STYLES} resize-none`}
       />
     </div>
   );
@@ -463,8 +650,13 @@ function SelectField({
   onChange,
 }: SelectProps) {
   return (
-    <div className="space-y-2">
-      <label className="text-sm text-black/60 dark:text-white/60">
+    <div className="space-y-3">
+      <label
+        className="
+          text-sm font-medium
+          text-black/70 dark:text-white/70
+        "
+      >
         {label}
       </label>
 
@@ -472,22 +664,24 @@ function SelectField({
         name={name}
         value={value}
         onChange={onChange}
-        className="
-          w-full rounded-xl border
-          border-black/10 dark:border-white/10
-          bg-white dark:bg-zinc-900
-          p-3
-          outline-none
-          transition-all duration-300
-          focus:ring-2 focus:ring-rose-500/30
-        "
+        className={INPUT_STYLES}
       >
         <option value="">
-          Selecione
+          Selecione uma opção
         </option>
 
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option
+            key={option}
+            value={option}
+            className="
+              bg-white
+              text-black
+
+              dark:bg-zinc-950
+              dark:text-white
+            "
+          >
             {option}
           </option>
         ))}
