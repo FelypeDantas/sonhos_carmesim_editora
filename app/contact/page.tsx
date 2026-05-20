@@ -1,175 +1,357 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-/* =========================
+/* =========================================================
    🧠 TYPES
-========================= */
+========================================================= */
+
+type PublishFormat = "Físico" | "E-book" | "Ambos";
+
 type FormState = {
-  name: string;
+  nome: string;
   email: string;
-  message: string;
+  genero: string;
+  statusLivro: string;
+  paginas: string;
+  formato: PublishFormat;
+  revisado: string;
+  possuiCapa: string;
+  objetivo: string;
+  arquivo: File | null;
 };
 
 const INITIAL_STATE: FormState = {
-  name: "",
+  nome: "",
   email: "",
-  message: "",
+  genero: "",
+  statusLivro: "",
+  paginas: "",
+  formato: "Ambos",
+  revisado: "",
+  possuiCapa: "",
+  objetivo: "",
+  arquivo: null,
 };
 
-/* =========================
+/* =========================================================
    🌹 PAGE
-========================= */
+========================================================= */
+
 export default function ContactPage() {
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /* =========================
+  /* =========================================================
      ✅ VALIDATION
-  ========================= */
+  ========================================================= */
+
   const validate = useCallback(() => {
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+    const requiredFields = [
+      form.nome,
+      form.email,
+      form.genero,
+      form.statusLivro,
+      form.paginas,
+      form.revisado,
+      form.possuiCapa,
+      form.objetivo,
+    ];
+
+    const hasEmptyField = requiredFields.some(
+      (field) => !field.trim()
+    );
+
+    if (hasEmptyField) {
       return "Preencha todos os campos.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(form.email)) {
       return "Digite um email válido.";
     }
 
-    if (form.message.trim().length < 10) {
-      return "A mensagem deve ter pelo menos 10 caracteres.";
+    if (!form.arquivo) {
+      return "Envie o arquivo editável da obra.";
+    }
+
+    const allowedTypes = [
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.oasis.opendocument.text",
+    ];
+
+    if (!allowedTypes.includes(form.arquivo.type)) {
+      return "Envie um arquivo Word (.doc, .docx) ou ODT.";
     }
 
     return null;
   }, [form]);
 
-  /* =========================
+  /* =========================================================
      ✏️ CHANGE
-  ========================= */
+  ========================================================= */
+
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (
+      e:
+        | React.ChangeEvent<HTMLInputElement>
+        | React.ChangeEvent<HTMLTextAreaElement>
+        | React.ChangeEvent<HTMLSelectElement>
+    ) => {
       const { name, value } = e.target;
 
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
       if (error) setError(null);
     },
     [error]
   );
 
-  /* =========================
-     🚀 SUBMIT (WHATSAPP)
-  ========================= */
+  const handleFile = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0] || null;
+
+      setForm((prev) => ({
+        ...prev,
+        arquivo: file,
+      }));
+
+      if (error) setError(null);
+    },
+    [error]
+  );
+
+  /* =========================================================
+     📦 WHATSAPP MESSAGE
+  ========================================================= */
+
+  const whatsappMessage = useMemo(() => {
+    return `🌹 *Novo atendimento editorial*
+
+👤 *Nome:* ${form.nome}
+📧 *Email:* ${form.email}
+
+📚 *Gênero do livro:* ${form.genero}
+🛠️ *Status da obra:* ${form.statusLivro}
+📄 *Quantidade de páginas/palavras:* ${form.paginas}
+📦 *Formato desejado:* ${form.formato}
+✍️ *Já passou por revisão?* ${form.revisado}
+🎨 *Possui capa?* ${form.possuiCapa}
+
+🎯 *Objetivo com a publicação:*
+${form.objetivo}
+
+📎 Arquivo enviado:
+${form.arquivo?.name || "Não enviado"}`;
+  }, [form]);
+
+  /* =========================================================
+     🚀 SUBMIT
+  ========================================================= */
+
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
 
       const validationError = validate();
+
       if (validationError) {
         setError(validationError);
         return;
       }
 
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const phone = "553182221360";
+        const phone = "553182221360";
 
-      const text = `🌹 *Novo contato - Sonhos Carmesim*
+        /**
+         * Aqui você pode futuramente:
+         * - enviar arquivo para Supabase Storage
+         * - Cloudinary
+         * - UploadThing
+         * - Firebase Storage
+         */
 
-👤 Nome: ${form.name}
-📧 Email: ${form.email}
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(
+          whatsappMessage
+        )}`;
 
-💬 Mensagem:
-${form.message}`;
-
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-
-      setTimeout(() => {
         window.open(url, "_blank");
 
         setForm(INITIAL_STATE);
+      } catch {
+        setError("Erro ao enviar formulário.");
+      } finally {
         setLoading(false);
-      }, 400);
+      }
     },
-    [form, validate]
+    [validate, whatsappMessage]
   );
 
+  /* =========================================================
+     🎨 UI
+  ========================================================= */
+
   return (
-    <main className="min-h-screen flex flex-col transition-colors duration-500">
+    <main className="min-h-screen px-6 py-20">
+      <section className="mx-auto max-w-3xl">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold">
+            Atendimento Editorial
+          </h1>
 
-      {/* 🎬 HERO */}
-      <section className="h-[40vh] flex flex-col justify-center items-center text-center px-6">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-wide">
-          Entre em Contato
-        </h1>
+          <p className="mt-4 text-black/60 dark:text-white/60">
+            Envie as informações da sua obra para agilizar a análise editorial.
+          </p>
+        </div>
 
-        <p className="mt-4 text-[color:var(--foreground)]/60 max-w-xl">
-          Sua mensagem será entregue… sem intermediários.
-        </p>
-      </section>
-
-      {/* 📩 FORM */}
-      <section className="flex-1 flex justify-center px-6 pb-20">
         <form
           onSubmit={handleSubmit}
           className="
-            w-full max-w-xl space-y-6
-            bg-black/5 dark:bg-white/5
-            backdrop-blur-md
-            p-8 rounded-2xl
+            space-y-6
+            rounded-3xl
             border border-black/10 dark:border-white/10
+            bg-black/5 dark:bg-white/5
+            backdrop-blur-xl
+            p-8
           "
         >
-          {/* ❗ ERROR */}
           {error && (
-            <div className="text-sm text-red-500 bg-red-500/10 p-3 rounded-md animate-pulse">
+            <div className="rounded-xl bg-red-500/10 p-4 text-sm text-red-500">
               {error}
             </div>
           )}
 
-          {/* INPUTS */}
-          <Input
-            label="Nome"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            error={!!error && !form.name}
-          />
+          <div className="grid gap-6 md:grid-cols-2">
+            <Input
+              label="Seu nome"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Seu email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+            />
+          </div>
 
           <Input
-            label="Email"
-            name="email"
-            type="email"
-            value={form.email}
+            label="Qual é o gênero do livro?"
+            name="genero"
+            value={form.genero}
             onChange={handleChange}
-            error={!!error && !form.email}
           />
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <SelectField
+              label="A obra está finalizada?"
+              name="statusLivro"
+              value={form.statusLivro}
+              onChange={handleChange}
+              options={[
+                "Finalizada",
+                "Em andamento",
+              ]}
+            />
+
+            <Input
+              label="Quantidade de páginas ou palavras"
+              name="paginas"
+              value={form.paginas}
+              onChange={handleChange}
+            />
+          </div>
+
+          <SelectField
+            label="Formato desejado"
+            name="formato"
+            value={form.formato}
+            onChange={handleChange}
+            options={[
+              "Físico",
+              "E-book",
+              "Ambos",
+            ]}
+          />
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <SelectField
+              label="Já passou por revisão profissional?"
+              name="revisado"
+              value={form.revisado}
+              onChange={handleChange}
+              options={[
+                "Sim",
+                "Não",
+              ]}
+            />
+
+            <SelectField
+              label="Você já possui capa?"
+              name="possuiCapa"
+              value={form.possuiCapa}
+              onChange={handleChange}
+              options={[
+                "Sim",
+                "Não",
+              ]}
+            />
+          </div>
 
           <Textarea
-            label="Mensagem"
-            name="message"
-            value={form.message}
+            label="Qual seu objetivo com a publicação?"
+            name="objetivo"
+            value={form.objetivo}
             onChange={handleChange}
-            error={!!error && !form.message}
           />
 
-          {/* BUTTON */}
+          {/* 📎 FILE */}
+          <div className="space-y-2">
+            <label className="text-sm text-black/60 dark:text-white/60">
+              Arquivo editável da obra
+            </label>
+
+            <input
+              type="file"
+              accept=".doc,.docx,.odt"
+              onChange={handleFile}
+              className="
+                w-full rounded-xl border border-dashed
+                border-black/20 dark:border-white/20
+                p-4 text-sm
+              "
+            />
+
+            <p className="text-xs text-black/50 dark:text-white/50">
+              Envie um arquivo Word, DOCX ou ODT.
+            </p>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
             className="
-              w-full py-3 rounded-lg font-semibold
-              bg-green-500 text-black
-              hover:bg-green-400
-              disabled:opacity-60 disabled:cursor-not-allowed
-
+              w-full rounded-xl bg-green-500 py-4
+              font-semibold text-black
               transition-all duration-300
-              focus:outline-none
-              focus:ring-2 focus:ring-green-400/50
+              hover:bg-green-400
+              disabled:opacity-50
             "
           >
-            {loading ? "Enviando..." : "Enviar via WhatsApp 💬"}
+            {loading
+              ? "Enviando..."
+              : "Enviar atendimento via WhatsApp 💬"}
           </button>
         </form>
       </section>
@@ -177,33 +359,30 @@ ${form.message}`;
   );
 }
 
-/* =========================
-   🧩 INPUT COMPONENT
-========================= */
+/* =========================================================
+   🧩 COMPONENTS
+========================================================= */
 
-type BaseProps = {
+type InputProps = {
   label: string;
   name: string;
   value: string;
-  error?: boolean;
-};
-
-type InputProps = BaseProps & {
   type?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 };
 
 function Input({
   label,
   name,
   value,
-  onChange,
   type = "text",
-  error,
+  onChange,
 }: InputProps) {
   return (
-    <div className="flex flex-col">
-      <label className="text-sm text-[color:var(--foreground)]/60">
+    <div className="space-y-2">
+      <label className="text-sm text-black/60 dark:text-white/60">
         {label}
       </label>
 
@@ -212,38 +391,27 @@ function Input({
         name={name}
         value={value}
         onChange={onChange}
-        placeholder={`Digite seu ${label.toLowerCase()}`}
-        className={`
-          w-full mt-2 p-3 rounded-lg
-
+        className="
+          w-full rounded-xl border
+          border-black/10 dark:border-white/10
           bg-white dark:bg-zinc-900
-          text-black dark:text-white
-
-          placeholder:text-black/40 dark:placeholder:text-white/40
-
-          border ${error
-            ? "border-red-500"
-            : "border-black/20 dark:border-white/20"
-          }
-
-          focus:outline-none
-          focus:ring-2
-          ${error ? "focus:ring-red-500/40" : "focus:ring-red-500/20"}
-
-          caret-red-500
+          p-3
+          outline-none
           transition-all duration-300
-        `}
+          focus:ring-2 focus:ring-rose-500/30
+        "
       />
     </div>
   );
 }
 
-/* =========================
-   🧩 TEXTAREA COMPONENT
-========================= */
-
-type TextareaProps = BaseProps & {
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+type TextareaProps = {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => void;
 };
 
 function Textarea({
@@ -251,43 +419,79 @@ function Textarea({
   name,
   value,
   onChange,
-  error,
 }: TextareaProps) {
   return (
-    <div className="flex flex-col">
-      <label className="text-sm text-[color:var(--foreground)]/60">
+    <div className="space-y-2">
+      <label className="text-sm text-black/60 dark:text-white/60">
         {label}
       </label>
 
       <textarea
-        name={name}
         rows={5}
+        name={name}
         value={value}
         onChange={onChange}
-        placeholder="Escreva sua mensagem..."
-        className={`
-          w-full mt-2 p-3 rounded-lg
-
+        className="
+          w-full resize-none rounded-xl border
+          border-black/10 dark:border-white/10
           bg-white dark:bg-zinc-900
-          text-black dark:text-white
-
-          placeholder:text-black/40 dark:placeholder:text-white/40
-
-          border ${error
-            ? "border-red-500"
-            : "border-black/20 dark:border-white/20"
-          }
-
-          focus:outline-none
-          focus:ring-2
-          ${error ? "focus:ring-red-500/40" : "focus:ring-red-500/20"}
-
-          caret-red-500
-          resize-none
-
+          p-3
+          outline-none
           transition-all duration-300
-        `}
+          focus:ring-2 focus:ring-rose-500/30
+        "
       />
+    </div>
+  );
+}
+
+type SelectProps = {
+  label: string;
+  name: string;
+  value: string;
+  options: string[];
+  onChange: (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => void;
+};
+
+function SelectField({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+}: SelectProps) {
+  return (
+    <div className="space-y-2">
+      <label className="text-sm text-black/60 dark:text-white/60">
+        {label}
+      </label>
+
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="
+          w-full rounded-xl border
+          border-black/10 dark:border-white/10
+          bg-white dark:bg-zinc-900
+          p-3
+          outline-none
+          transition-all duration-300
+          focus:ring-2 focus:ring-rose-500/30
+        "
+      >
+        <option value="">
+          Selecione
+        </option>
+
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
