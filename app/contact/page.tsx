@@ -213,7 +213,7 @@ ${form.arquivo?.name || "Não enviado"}
       try {
         setLoading(true);
 
-        const phone = "553182221360";
+        const phone = "555195885293";
 
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(
           whatsappMessage
