@@ -18,15 +18,70 @@ type FormState = {
   revisado: string;
   possuiCapa: string;
   objetivo: string;
-  arquivo: File | null;
 };
 
-type FieldProps = {
+type BaseFieldProps = {
   label: string;
   name: string;
   value: string;
   placeholder?: string;
 };
+
+type InputProps = BaseFieldProps & {
+  type?: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+};
+
+type TextareaProps = BaseFieldProps & {
+  onChange: (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => void;
+};
+
+type SelectProps = {
+  label: string;
+  name: string;
+  value: string;
+  options: string[];
+  onChange: (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => void;
+};
+
+/* =========================================================
+   🎨 STYLES
+========================================================= */
+
+const FIELD_STYLES = `
+  w-full rounded-2xl border
+
+  border-black/10
+  dark:border-white/10
+
+  bg-white/80
+  dark:bg-zinc-950/80
+
+  text-black
+  dark:text-white
+
+  placeholder:text-black/40
+  dark:placeholder:text-white/40
+
+  px-4 py-3
+
+  outline-none
+
+  transition-all duration-300
+
+  focus:border-rose-500/40
+  focus:ring-4
+  focus:ring-rose-500/10
+
+  hover:border-black/20
+  dark:hover:border-white/20
+`;
 
 const INITIAL_STATE: FormState = {
   nome: "",
@@ -38,42 +93,21 @@ const INITIAL_STATE: FormState = {
   revisado: "",
   possuiCapa: "",
   objetivo: "",
-  arquivo: null,
 };
-
-const INPUT_STYLES = `
-  w-full rounded-2xl border
-  border-black/10 dark:border-white/10
-
-  bg-white/80 dark:bg-zinc-950/80
-  backdrop-blur-xl
-
-  text-black dark:text-white
-  placeholder:text-black/40 dark:placeholder:text-white/40
-
-  px-4 py-3
-
-  outline-none
-  transition-all duration-300
-
-  focus:border-rose-500/40
-  focus:ring-4
-  focus:ring-rose-500/10
-
-  hover:border-black/20
-  dark:hover:border-white/20
-`;
 
 /* =========================================================
    🌹 PAGE
 ========================================================= */
 
 export default function ContactPage() {
-  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [form, setForm] =
+    useState<FormState>(INITIAL_STATE);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] =
+    useState<string | null>(null);
 
   /* =========================================================
      ✅ VALIDATION
@@ -91,32 +125,20 @@ export default function ContactPage() {
       form.objetivo,
     ];
 
-    const hasEmptyField = requiredFields.some(
-      (field) => !field.trim()
-    );
+    const hasEmptyField =
+      requiredFields.some(
+        (field) => !field.trim()
+      );
 
     if (hasEmptyField) {
       return "Preencha todos os campos.";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(form.email)) {
       return "Digite um email válido.";
-    }
-
-    if (!form.arquivo) {
-      return "Envie o arquivo editável da obra.";
-    }
-
-    const allowedTypes = [
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/vnd.oasis.opendocument.text",
-    ];
-
-    if (!allowedTypes.includes(form.arquivo.type)) {
-      return "Envie um arquivo Word (.doc, .docx) ou ODT.";
     }
 
     return null;
@@ -149,28 +171,15 @@ export default function ContactPage() {
     [error]
   );
 
-  const handleFile = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0] || null;
-
-      setForm((prev) => ({
-        ...prev,
-        arquivo: file,
-      }));
-
-      clearError();
-    },
-    [error]
-  );
-
   /* =========================================================
-     📦 WHATSAPP MESSAGE
+     💬 WHATSAPP MESSAGE
   ========================================================= */
 
   const whatsappMessage = useMemo(() => {
     return `🌹 *Novo atendimento editorial*
 
 👤 *Nome:* ${form.nome}
+
 📧 *Email:* ${form.email}
 
 📚 *Gênero do livro:* ${form.genero}
@@ -190,8 +199,8 @@ ${form.possuiCapa}
 🎯 *Objetivo com a publicação:*
 ${form.objetivo}
 
-📎 *Arquivo enviado:*
-${form.arquivo?.name || "Não enviado"}
+📎 *Observação:*
+O autor será orientado posteriormente sobre o envio do arquivo da obra.
 `;
   }, [form]);
 
@@ -223,7 +232,9 @@ ${form.arquivo?.name || "Não enviado"}
 
         setForm(INITIAL_STATE);
       } catch {
-        setError("Erro ao enviar formulário.");
+        setError(
+          "Não foi possível enviar o formulário."
+        );
       } finally {
         setLoading(false);
       }
@@ -239,6 +250,7 @@ ${form.arquivo?.name || "Não enviado"}
     <main
       className="
         min-h-screen
+
         bg-gradient-to-b
         from-white
         via-zinc-50
@@ -257,12 +269,17 @@ ${form.arquivo?.name || "Não enviado"}
           <div
             className="
               inline-flex items-center gap-2
+
               rounded-full
+
               border border-rose-500/20
+
               bg-rose-500/10
+
               px-4 py-2
 
-              text-sm text-rose-500
+              text-sm font-medium
+              text-rose-500
             "
           >
             🌹 Atendimento Editorial
@@ -271,8 +288,12 @@ ${form.arquivo?.name || "Não enviado"}
           <h1
             className="
               mt-6
-              text-4xl font-black tracking-tight
-              text-black dark:text-white
+
+              text-4xl font-black
+              tracking-tight
+
+              text-black
+              dark:text-white
 
               md:text-6xl
             "
@@ -283,12 +304,16 @@ ${form.arquivo?.name || "Não enviado"}
           <p
             className="
               mx-auto mt-5 max-w-2xl
+
               text-base leading-relaxed
-              text-black/60 dark:text-white/60
+
+              text-black/60
+              dark:text-white/60
             "
           >
-            Preencha as informações abaixo para agilizar
-            a avaliação editorial da sua obra.
+            Responda às perguntas abaixo para
+            agilizar a avaliação editorial da
+            sua obra.
           </p>
         </div>
 
@@ -319,8 +344,11 @@ ${form.arquivo?.name || "Não enviado"}
             <div
               className="
                 rounded-2xl
+
                 border border-red-500/20
+
                 bg-red-500/10
+
                 px-4 py-4
 
                 text-sm font-medium
@@ -424,82 +452,26 @@ ${form.arquivo?.name || "Não enviado"}
             onChange={handleChange}
           />
 
-          {/* FILE */}
-          <div className="space-y-3">
-            <label
-              className="
-                text-sm font-medium
-                text-black/70 dark:text-white/70
-              "
-            >
-              Arquivo editável da obra
-            </label>
+          {/* INFO */}
+          <div
+            className="
+              rounded-2xl
 
-            <div
-              className="
-                rounded-2xl border border-dashed
-                border-black/15 dark:border-white/15
+              border border-amber-500/20
 
-                bg-white/50 dark:bg-zinc-950/40
+              bg-amber-500/10
 
-                p-6
+              px-5 py-4
 
-                transition-all duration-300
+              text-sm leading-relaxed
 
-                hover:border-rose-500/30
-              "
-            >
-              <input
-                type="file"
-                accept=".doc,.docx,.odt"
-                onChange={handleFile}
-                className="
-                  w-full
-
-                  text-sm
-                  text-black dark:text-white
-
-                  file:mr-4
-                  file:rounded-xl
-                  file:border-0
-
-                  file:bg-rose-500
-                  file:px-4
-                  file:py-2
-
-                  file:text-sm
-                  file:font-semibold
-                  file:text-white
-
-                  hover:file:bg-rose-400
-                "
-              />
-
-              <p
-                className="
-                  mt-3 text-xs
-                  text-black/50 dark:text-white/50
-                "
-              >
-                Aceitamos arquivos .DOC, .DOCX e .ODT
-              </p>
-
-              {form.arquivo && (
-                <div
-                  className="
-                    mt-4 rounded-xl
-                    border border-emerald-500/20
-                    bg-emerald-500/10
-                    px-4 py-3
-
-                    text-sm
-                    text-emerald-500
-                  "
-                >
-                  📎 {form.arquivo.name}
-                </div>
-              )}
-            </div>
+              text-amber-600
+              dark:text-amber-400
+            "
+          >
+            📎 O envio do arquivo da obra será
+            solicitado posteriormente durante o
+            atendimento editorial.
           </div>
 
           {/* BUTTON */}
@@ -517,8 +489,7 @@ ${form.arquivo?.name || "Não enviado"}
 
               px-6 py-4
 
-              font-bold
-              text-white
+              font-bold text-white
 
               transition-all duration-300
 
@@ -539,7 +510,9 @@ ${form.arquivo?.name || "Não enviado"}
             <div
               className="
                 absolute inset-0
+
                 translate-y-full
+
                 bg-white/10
 
                 transition-transform duration-300
@@ -555,15 +528,8 @@ ${form.arquivo?.name || "Não enviado"}
 }
 
 /* =========================================================
-   🧩 COMPONENTS
+   🧩 INPUT
 ========================================================= */
-
-type InputProps = FieldProps & {
-  type?: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
-};
 
 function Input({
   label,
@@ -578,7 +544,9 @@ function Input({
       <label
         className="
           text-sm font-medium
-          text-black/70 dark:text-white/70
+
+          text-black/70
+          dark:text-white/70
         "
       >
         {label}
@@ -590,17 +558,15 @@ function Input({
         value={value}
         placeholder={placeholder}
         onChange={onChange}
-        className={INPUT_STYLES}
+        className={FIELD_STYLES}
       />
     </div>
   );
 }
 
-type TextareaProps = FieldProps & {
-  onChange: (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => void;
-};
+/* =========================================================
+   🧩 TEXTAREA
+========================================================= */
 
 function Textarea({
   label,
@@ -614,7 +580,9 @@ function Textarea({
       <label
         className="
           text-sm font-medium
-          text-black/70 dark:text-white/70
+
+          text-black/70
+          dark:text-white/70
         "
       >
         {label}
@@ -626,21 +594,15 @@ function Textarea({
         value={value}
         placeholder={placeholder}
         onChange={onChange}
-        className={`${INPUT_STYLES} resize-none`}
+        className={`${FIELD_STYLES} resize-none`}
       />
     </div>
   );
 }
 
-type SelectProps = {
-  label: string;
-  name: string;
-  value: string;
-  options: string[];
-  onChange: (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => void;
-};
+/* =========================================================
+   🧩 SELECT
+========================================================= */
 
 function SelectField({
   label,
@@ -654,7 +616,9 @@ function SelectField({
       <label
         className="
           text-sm font-medium
-          text-black/70 dark:text-white/70
+
+          text-black/70
+          dark:text-white/70
         "
       >
         {label}
@@ -664,7 +628,7 @@ function SelectField({
         name={name}
         value={value}
         onChange={onChange}
-        className={INPUT_STYLES}
+        className={FIELD_STYLES}
       >
         <option value="">
           Selecione uma opção
@@ -675,8 +639,7 @@ function SelectField({
             key={option}
             value={option}
             className="
-              bg-white
-              text-black
+              bg-white text-black
 
               dark:bg-zinc-950
               dark:text-white
