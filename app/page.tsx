@@ -35,11 +35,6 @@ return (
   {/* NAVBAR */}
   <Navbar />
 
-  {/* TOGGLE */}
-  <div className="fixed right-6 top-24 z-50">
-    <ThemeToggle />
-  </div>
-
   {/* HERO */}
   <section className="relative z-10 min-h-screen flex items-center">
     <div className="container mx-auto px-6">
