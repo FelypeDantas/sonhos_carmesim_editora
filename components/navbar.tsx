@@ -147,6 +147,9 @@ return (
             text-lg
             font-bold
             tracking-widest
+            text-zinc-900
+            dark:text-zinc-100
+            transition-colors
           "
         >
           SONHOS CARMESIM
@@ -324,8 +327,13 @@ return (
               ${
                 active
                   ? "text-red-500"
-                  : "text-zinc-700 dark:text-zinc-300"
-              }
+                  : `
+                      text-zinc-700
+                      dark:text-zinc-200
+                      hover:text-red-500
+                      dark:hover:text-red-400
+                    `
+                  }
             `}
           >
             {link.name}
