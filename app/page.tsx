@@ -164,7 +164,7 @@ return (
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-red-500">+50</h3>
+              <h3 className="text-2xl font-bold text-red-500">+7</h3>
               <p className="text-sm opacity-70">
                 Autores
               </p>
