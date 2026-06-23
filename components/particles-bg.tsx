@@ -1,89 +1,131 @@
 "use client";
 
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 import type { ISourceOptions } from "@tsparticles/engine";
 
-// 🔥 Carrega só no client (ESSENCIAL)
-const Particles = dynamic(() => import("@tsparticles/react"), {
-  ssr: false,
-});
+const Particles = dynamic(
+() => import("@tsparticles/react"),
+{ ssr: false }
+);
 
 export function ParticlesBG() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+const { resolvedTheme } = useTheme();
 
-  // 🧠 evita hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+const [mounted, setMounted] = useState(false);
+const [reducedMotion, setReducedMotion] = useState(false);
 
-  const isDark = resolvedTheme === "dark";
+useEffect(() => {
+setMounted(true);
 
-  const options = useMemo<ISourceOptions>(() => ({
-    fullScreen: { enable: false },
-    background: { color: "transparent" },
+const media = window.matchMedia(
+  "(prefers-reduced-motion: reduce)"
+);
 
-    fpsLimit: 60,
+setReducedMotion(media.matches);
 
-    particles: {
-      number: {
-        value: isDark ? 45 : 25,
-        density: {
-          enable: true,
-          area: 900,
-        },
-      },
+const listener = (event: MediaQueryListEvent) => {
+  setReducedMotion(event.matches);
+};
 
-      color: {
-        value: isDark ? "#ff0033" : "#111111",
-      },
+media.addEventListener("change", listener);
 
-      opacity: {
-        value: isDark ? 0.35 : 0.15,
-      },
+return () => {
+  media.removeEventListener("change", listener);
+};
 
-      size: {
-        value: { min: 1, max: isDark ? 3 : 2 },
-      },
+}, []);
 
-      move: {
+const isDark = resolvedTheme === "dark";
+
+const options = useMemo<ISourceOptions>(() => {
+const particleColor = isDark
+? "#dc2626"
+: "#18181b";
+
+return {
+  fullScreen: {
+    enable: false,
+  },
+
+  background: {
+    color: "transparent",
+  },
+
+  detectRetina: true,
+
+  fpsLimit: 30,
+
+  particles: {
+    number: {
+      value: isDark ? 40 : 20,
+      density: {
         enable: true,
-        speed: isDark ? 0.35 : 0.15,
-        random: true,
-        outModes: {
-          default: "out",
-        },
+        area: 1000,
       },
     },
 
-    interactivity: {
-      events: {
-        onHover: {
-          enable: true,
-          mode: "repulse",
-        },
-      },
-      modes: {
-        repulse: {
-          distance: 70,
-          duration: 0.4,
-        },
+    color: {
+      value: particleColor,
+    },
+
+    shape: {
+      type: "circle",
+    },
+
+    opacity: {
+      value: isDark ? 0.25 : 0.12,
+    },
+
+    size: {
+      value: {
+        min: 1,
+        max: isDark ? 2.5 : 2,
       },
     },
 
-    detectRetina: true,
-  }), [isDark]);
+    move: {
+      enable: !reducedMotion,
 
-  // 🧠 bloqueia render até client estar pronto
-  if (!mounted || !resolvedTheme) return null;
+      speed: isDark ? 0.25 : 0.12,
 
-  return (
-    <Particles
-      id="tsparticles"
-      options={options}
-      className="absolute inset-0"
-    />
-  );
+      random: true,
+
+      direction: "none",
+
+      outModes: {
+        default: "out",
+      },
+    },
+
+    links: {
+      enable: false,
+    },
+  },
+
+  interactivity: {
+    events: {
+      onHover: {
+        enable: false,
+      },
+      onClick: {
+        enable: false,
+      },
+    },
+  },
+};
+
+}, [isDark, reducedMotion]);
+
+if (!mounted || !resolvedTheme) {
+return null;
+}
+
+return ( <Particles
+   id="particles-bg"
+   className="absolute inset-0"
+   options={options}
+ />
+);
 }
