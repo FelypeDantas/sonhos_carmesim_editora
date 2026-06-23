@@ -172,12 +172,12 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               variants={fadeUp}
               className="
-    relative p-6 rounded-xl border
-    border-black/10 dark:border-white/10
-    backdrop-blur-sm
-    overflow-hidden
-    group text-left
-  "
+                relative p-6 rounded-xl border
+                border-black/10 dark:border-white/10
+                backdrop-blur-sm
+                overflow-hidden
+                group text-left
+              "
             >
               {/* glow */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-red-900/20 via-transparent to-transparent" />
@@ -303,46 +303,6 @@ export default function AboutPage() {
 
       {/* 🌹 DIVIDER */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
-
-      {/* ORÇAMENTO */}
-      <motion.section
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        className="py-16 px-6 max-w-4xl mx-auto text-center space-y-4"
-      >
-        <h2 className="text-2xl md:text-4xl font-semibold">
-          Quer transformar sua ideia em um livro?
-        </h2>
-
-        <p className="text-[color:var(--foreground)]/70 leading-relaxed text-base md:text-lg">
-          Entre em contato para um orçamento personalizado. Estamos aqui para ajudar a dar vida à sua história.
-        </p>
-      </motion.section>
-
-      {/* 🌹 DIVIDER */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
-
-
-      {/* ✍️ AUTOR */}
-      <motion.section
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        className="py-16 px-6 max-w-4xl mx-auto text-center space-y-4"
-      >
-        <h2 className="text-2xl md:text-4xl font-semibold">
-          O Criador
-        </h2>
-
-        <p className="text-[color:var(--foreground)]/70 leading-relaxed text-base md:text-lg">
-          Por trás do SONHOS CARMESIM existem 3 mentes criativas que transformam ideias em mundos.
-          Cada história nasce de um desejo de explorar o desconhecido e dar vida
-          ao que antes era apenas imaginação.
-        </p>
-      </motion.section>
 
       {/* 🎯 CTA */}
       <motion.section
