@@ -15,9 +15,10 @@ duration: 1,
 ease: [0.22, 1, 0.36, 1],
 };
 
-return ( <main className="ignore-system-dark relative min-h-screen overflow-x-hidden bg-white text-black dark:bg-black dark:text-white transition-colors duration-700">
+return ( 
+  
+  <main className="ignore-system-dark relative min-h-screen overflow-x-hidden bg-white text-black dark:bg-black dark:text-white transition-colors duration-700">
 
-```
   {/* BACKGROUND */}
   <div className="absolute inset-0 z-0 pointer-events-none">
     <ParticlesBG />
@@ -352,7 +353,5 @@ return ( <main className="ignore-system-dark relative min-h-screen overflow-x-hi
   </section>
 
 </main>
-```
-
 );
 }
