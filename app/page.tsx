@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, Transition } from "framer-motion";
-
+import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Petals } from "@/components/petals";
@@ -120,22 +120,24 @@ return (
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-10 justify-center lg:justify-start">
-            <button
-              className="
-                px-8
-                py-4
-                rounded-xl
-                bg-red-600
-                hover:bg-red-700
-                text-white
-                font-semibold
-                transition-all
-                shadow-[0_0_30px_rgba(220,38,38,0.35)]
-                hover:scale-105
-              "
-            >
-              Publicar minha obra
-            </button>
+            <Link
+                href="/contact"
+                className="
+                  px-8
+                  py-4
+                  rounded-xl
+                  bg-red-600
+                  hover:bg-red-700
+                  text-white
+                  font-semibold
+                  transition-all
+                  shadow-[0_0_30px_rgba(220,38,38,0.35)]
+                  hover:scale-105
+                  text-center
+                "
+              >
+                Publicar minha obra
+            </Link>
 
             <button
               className="
