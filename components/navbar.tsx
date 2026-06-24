@@ -21,8 +21,8 @@ const links = [
 { name: "Início", href: "/" },
 { name: "Sobre nós", href: "/about" },
 { name: "Portfólio", href: "/portfolio" },
-{ name: "Contato", href: "/contact" },
 { name: "Como Funciona", href: "/how-it-work"},
+{ name: "Contato", href: "/contact" },
 ];
 
 export function Navbar() {
