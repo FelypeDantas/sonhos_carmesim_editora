@@ -225,16 +225,44 @@ return (
       </div>
 
       {/* INDICADOR */} 
-      <motion.div 
-        animate={{ y: [0, 8, 0] }} 
-        transition={{ duration: 2, repeat: Infinity, }} 
-        className=" absolute bottom-8 left-1/2 -translate-x-1/2 text-sm opacity-60 hidden md:block " > 
-        ↓ Descubra mais </motion.div> 
+      <motion.button
+          onClick={() => {
+            document
+              .getElementById("diferenciais")
+              ?.scrollIntoView({
+                behavior: "smooth",
+              });
+          }}
+          animate={{ y: [0, 8, 0] }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+          }}
+          className="
+            absolute
+            bottom-8
+            left-1/2
+            -translate-x-1/2
+        
+            text-sm
+            opacity-60
+        
+            hover:opacity-100
+            transition-opacity
+        
+            hidden
+            md:block
+        
+            cursor-pointer
+          "
+        >
+          ↓ Descubra mais
+        </motion.button>
     </div>
   </section>
 
   {/* DIFERENCIAIS */}
-  <section className="relative z-10 py-24">
+  <section id="diferenciais" className="relative z-10 py-24">
     <div className="container mx-auto px-6">
 
       <motion.div
