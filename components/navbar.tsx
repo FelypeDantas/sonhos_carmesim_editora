@@ -20,7 +20,7 @@ import { ThemeToggle } from "./theme-toggle";
 const links = [
 { name: "Início", href: "/" },
 { name: "Sobre nós", href: "/about" },
-{ name: "Exemplares", href: "/portfolio" },
+{ name: "Portfólio", href: "/portfolio" },
 { name: "Contato", href: "/contact" },
 ];
 
