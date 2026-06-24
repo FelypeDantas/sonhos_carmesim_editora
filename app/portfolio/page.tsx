@@ -2,6 +2,7 @@
 
 import { PortfolioHero } from "@/components/PortfolioPage/Hero";
 import Link from "next/link";
+import Image from "next/image";
 
 const sections = [
   {
@@ -132,18 +133,13 @@ export default function PortfolioPage() {
                     "
                   >
                     {/* substituir pela imagem real */}
-                    <div
-                      className="
-                        w-full
-                        h-full
-                        flex
-                        items-center
-                        justify-center
-                        text-xs
-                        opacity-50
-                      "
-                    >
-                      {image}
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={image}
+                        alt={section.title}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                   </div>
                 ))}
