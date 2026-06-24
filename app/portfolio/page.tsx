@@ -1,6 +1,6 @@
 "use client";
 
-import { PortfolioHero } from "@/components/portfolio/portfolio-hero";
+import { Hero } from "@/components/portfolio/Hero";
 import Link from "next/link";
 
 const sections = [
