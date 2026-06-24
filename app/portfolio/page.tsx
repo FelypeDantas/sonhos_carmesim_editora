@@ -10,10 +10,10 @@ const sections = [
     description:
       "Capas desenvolvidas para diferentes gêneros, públicos e estilos literários.",
     images: [
-      "/public/portfolio/capa-1.jpeg",
-      "/public/portfolio/capa-2.jpeg",
-      "/public/portfolio/capa-3.jpeg",
-      "/public/portfolio/capa-4.jpeg",
+      "/portfolio/capa-1.jpeg",
+      "/portfolio/capa-2.jpeg",
+      "/portfolio/capa-3.jpeg",
+      "/portfolio/capa-4.jpeg",
     ],
   },
 
