@@ -219,27 +219,6 @@ return (
           />
         </motion.div>
       </div>
-
-      {/* INDICADOR */}
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-        }}
-        className="
-          absolute
-          bottom-8
-          left-1/2
-          -translate-x-1/2
-          text-sm
-          opacity-60
-          hidden md:block
-        "
-      >
-        ↓ Descubra mais
-      </motion.div>
-    </div>
   </section>
 
   {/* DIFERENCIAIS */}
