@@ -13,7 +13,7 @@ const sections = [
     images: [
       "/portfolio/capa-1.jpeg",
       "/portfolio/capa-2.png",
-      "/portfolio/capa-3.jpeg",
+      "/portfolio/capa-3.png",
       "/portfolio/capa-4.jpeg",
     ],
   },
