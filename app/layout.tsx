@@ -1,5 +1,3 @@
-"use client";
-
 import "./globals.css";
 import { AppThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
