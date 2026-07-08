@@ -173,30 +173,3 @@ a:hover {
     transition: none;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .ignore-system-dark {
-    all: unset;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: #1a0000;
-    color: #fff;
-    border: 1px solid #ff4d6d;
-    padding: 10px 20px;
-    border-radius: 8px;
-  }
-
-  .navbar {
-    background: rgba(10, 10, 15, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .navbar .logo {
-    filter: drop-shadow(0 0 10px rgba(255, 77, 166, 0.25));
-  }
-
-}
