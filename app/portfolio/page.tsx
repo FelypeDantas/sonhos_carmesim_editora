@@ -15,6 +15,7 @@ const sections = [
       "/portfolio/capa-2.png",
       "/portfolio/capa-3.png",
       "/portfolio/capa-4.jpeg",
+      "/portfolio/capa-4_1.jpeg"
     ],
   },
 
