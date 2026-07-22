@@ -1,6 +1,7 @@
 "use client";
 
 import { PortfolioHero } from "@/components/PortfolioPage/Hero";
+import { StoryImage } from "@/components/StoryImage";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -133,13 +134,17 @@ export default function PortfolioPage() {
                     "
                   >
                     {/* substituir pela imagem real */}
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={image}
-                        alt={section.title}
-                        fill
-                        className="object-cover"
-                      />
+                   <div className="relative w-full h-full">
+                      {image === "/portfolio/capa-4.jpeg" ? (
+                        <StoryImage />
+                      ) : (
+                        <Image
+                          src={image}
+                          alt={section.title}
+                          fill
+                          className="object-cover"
+                        />
+                      )}
                     </div>
                   </div>
                 ))}
