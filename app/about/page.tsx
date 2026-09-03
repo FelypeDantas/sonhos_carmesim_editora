@@ -48,7 +48,7 @@ const pillars = [
 const team = [
   {
     name: "Maria Eduarda Benjamin Batista",
-    image: "/equipe/duda.jpg",
+    image: "/equipe/duda.jpeg",
     href: "https://cartao-visitas-duda-benjamin.vercel.app/",
     description:
       "Atua na interseção entre técnica e arte, unindo precisão e criatividade para dar forma às ideias. Sua visão transita entre o digital e o ambiental, trazendo profundidade estética e consciência aos projetos.",
