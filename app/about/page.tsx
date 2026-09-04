@@ -64,7 +64,7 @@ const team = [
   },
   {
     name: "Elim Cardoso Nascimento",
-    image: "/equipe/elim.jpg",
+    image: "/equipe/elim.jpeg",
     href: "https://cartao-visitas-elim-nascimento.vercel.app/",
     description:
       "Entre palavras e mente, constrói pontes entre o que é sentido e o que pode ser escrito. Sua atuação une linguagem, ensino e cognição, trazendo profundidade, clareza e intenção para cada texto desenvolvido.",
