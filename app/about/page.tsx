@@ -404,7 +404,7 @@ export default function AboutPage() {
           </motion.div>
 
           {/* Cards */}
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid justify-center gap-8 md:grid-cols-2 lg:grid-cols-3">
             {team.map((person) => (
               <PersonCard
                 key={person.name}
