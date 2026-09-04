@@ -77,21 +77,6 @@ const team = [
       "Psicolinguística",
     ],
   },
-  {
-    name: "Samanta Natalir de Souza Alves",
-    image: "/equipe/samanta.jpg",
-    href: "https://cartao-visitas-samanta-alves.vercel.app/",
-    description:
-      "Entre números, ciência e organização, transforma ideias em estruturas viáveis. Sua atuação conecta sensibilidade humana com lógica e gestão, garantindo que cada projeto não apenas exista, mas se sustente e evolua.",
-    skills: [
-      "Técnica de Enfermagem",
-      "Gestão Financeira",
-      "Fluxo de Caixa",
-      "Diagramação",
-      "Biomedicina (em curso)",
-      "Ciência da Computação (em curso)",
-    ],
-  },
 ];
 
 function SectionDivider() {
