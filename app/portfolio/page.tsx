@@ -25,10 +25,10 @@ const sections = [
     description:
       "Projeto gráfico, paginação e organização visual para uma experiência de leitura agradável.",
     images: [
-      "/portfolio/diagramacao/1.jpg",
+      "/portfolio/diagramacao-1.jpg",
       "/portfolio/diagramacao/2.jpg",
       "/portfolio/diagramacao/3.jpg",
-      "/portfolio/diagramacao/4.jpg",
+      "/portfolio/diagramacao-4.jpeg",
     ],
   },
 
