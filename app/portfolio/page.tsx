@@ -33,19 +33,6 @@ const sections = [
   },
 
   {
-    icon: "🏛️",
-    title: "Editorial",
-    description:
-      "Planejamento editorial completo, estruturação de conteúdo e identidade da obra.",
-    images: [
-      "/portfolio/editorial/1.jpg",
-      "/portfolio/editorial/2.jpg",
-      "/portfolio/editorial/3.jpg",
-      "/portfolio/editorial/4.jpg",
-    ],
-  },
-
-  {
     icon: "🎨",
     title: "Artes",
     description:
