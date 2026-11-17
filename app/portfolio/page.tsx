@@ -38,10 +38,10 @@ const sections = [
     description:
       "Ilustrações, materiais promocionais, concept arts e elementos visuais exclusivos.",
     images: [
-      "/portfolio/artes/1.jpg",
-      "/portfolio/artes/2.jpg",
-      "/portfolio/artes/3.jpg",
-      "/portfolio/artes/4.jpg",
+      "/portfolio/artes-1.png",
+      "/portfolio/artes-2.png",
+      "/portfolio/artes-3.png",
+      "/portfolio/artes-4.png",
     ],
   },
 ];
