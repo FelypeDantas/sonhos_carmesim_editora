@@ -1,63 +1,133 @@
+
 @import "tailwindcss";
+
 @custom-variant dark (&:where(.dark, .dark *));
-/* =========================
-   🔤 FONTES
-========================= */
-/* Certifique-se de que essas fontes estão realmente carregadas
-   (next/font ou @font-face) */
+
+/* =========================================
+   🌹 SONHOS CARMESIM
+   Design System Global
+========================================= */
+
+/* =========================================
+   01. TIPOGRAFIA
+========================================= */
+
 :root {
-  --font-title: "La Luxies Serif", "Playfair Display", serif;
+  --font-title: "La Luxies Serif", "Playfair Display", Georgia, serif;
   --font-subtitle: "Amoresa Ages", cursive;
-  --font-body: "Playfair Display", serif;
-
-  /* 🔒 fallback inteligente para evitar bugs */
+  --font-body: "Playfair Display", Georgia, serif;
   --font-sans: var(--font-body);
+
+  --font-size-small: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-large: 1.125rem;
 }
 
-/* =========================
-   🎨 DESIGN TOKENS
-========================= */
+/* =========================================
+   02. DESIGN TOKENS
+========================================= */
+
 :root {
-  /* 🎭 Cores base */
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 
-  /* 🌹 Pétalas */
-  --petal-light: #ff4d6d;
-  --petal-dark: #8b0000;
+  /* Superfícies */
+  --background: #faf9f7;
+  --foreground: #171313;
 
-  /* 🎬 Transições */
-  --transition-fast: 0.3s ease;
-  --transition-base: 0.6s ease;
+  --surface: #ffffff;
+  --surface-secondary: #f3efed;
 
-  /* 🌫️ Efeitos */
-  --blur-soft: 6px;
+  /* Identidade */
+  --primary: #991b1b;
+  --primary-hover: #7f1d1d;
+  --primary-light: #dc2626;
+
+  --secondary: #5c101d;
+  --accent: #b89a65;
+
+  /* Bordas */
+  --border: rgba(80, 30, 30, 0.12);
+
+  /* Pétalas */
+  --petal-light: #ff647d;
+  --petal-dark: #991b1b;
+
+  /* Sombras */
+  --shadow-soft: 0 10px 40px rgba(70, 15, 20, 0.06);
+  --shadow-red: 0 10px 35px rgba(153, 27, 27, 0.20);
+
+  /* Animações */
+  --transition-fast: 0.25s ease;
+  --transition-base: 0.5s ease;
+  --transition-slow: 0.8s ease;
+
+  /* Efeitos */
+  --blur-soft: 8px;
+  --blur-strong: 20px;
+
+  /* Bordas arredondadas */
+  --radius-small: 8px;
+  --radius-medium: 16px;
+  --radius-large: 24px;
 }
 
-/* 🌑 Dark mode */
+/* =========================================
+   03. DARK MODE
+========================================= */
+
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  color-scheme: dark;
+
+  --background: #080707;
+  --foreground: #f5eeee;
+
+  --surface: #111010;
+  --surface-secondary: #191414;
+
+  --primary: #dc2626;
+  --primary-hover: #ef4444;
+  --primary-light: #fb7185;
+
+  --secondary: #5a101a;
+  --accent: #c5a572;
+
+  --border: rgba(255, 255, 255, 0.09);
 
   --petal-light: #ff1744;
   --petal-dark: #5a0000;
+
+  --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --shadow-red: 0 10px 40px rgba(153, 27, 27, 0.25);
 }
 
-/* =========================
-   🧱 BASE
-========================= */
+/* =========================================
+   04. RESET E BASE
+========================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 90px;
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
+
   background-color: var(--background);
   color: var(--foreground);
 
-  /* 🎯 AGORA CORRETO */
   font-family: var(--font-body);
+  font-size: var(--font-size-base);
 
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
   text-rendering: optimizeLegibility;
 
   transition:
@@ -65,55 +135,142 @@ body {
     color var(--transition-base);
 }
 
-/* 🧼 Reset útil */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+::selection {
+  background: rgba(153, 27, 27, 0.25);
+  color: var(--foreground);
 }
 
-/* =========================
-   🏷️ TIPOGRAFIA
-========================= */
+/* =========================================
+   05. TIPOGRAFIA
+========================================= */
 
-/* 🎯 Títulos principais */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-title);
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  letter-spacing: 0.015em;
   line-height: 1.2;
 }
 
-/* ✨ Subtítulos / destaques */
-h4, h5, h6 {
+h4,
+h5,
+h6 {
   font-family: var(--font-subtitle);
-  letter-spacing: 0.03em;
+  font-weight: 400;
   line-height: 1.3;
 }
 
-/* 📖 Texto geral */
-p, span, a, li {
+p,
+li {
   font-family: var(--font-body);
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
-/* 🔗 Links com leve charme */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
 a {
-  transition: opacity var(--transition-fast);
+  color: inherit;
+  text-decoration: none;
 }
 
-a:hover {
-  opacity: 0.75;
+/* =========================================
+   06. SCROLLBAR
+========================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--background);
 }
 
-/* =========================
-   🌹 PÉTALAS
-========================= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* =========================================
+   07. EFEITOS DE VIDRO
+========================================= */
+
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(120, 30, 30, 0.10);
+  backdrop-filter: blur(var(--blur-strong));
+  -webkit-backdrop-filter: blur(var(--blur-strong));
+}
+
+.dark .glass {
+  background: rgba(20, 15, 15, 0.65);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================================
+   08. GRADIENTES
+========================================= */
+
+.text-carmesim {
+  background: linear-gradient(
+    110deg,
+    #991b1b,
+    #dc2626,
+    #fb7185
+  );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dark .text-carmesim {
+  background-image: linear-gradient(
+    110deg,
+    #ef4444,
+    #fb7185,
+    #fda4af
+  );
+}
+
+.bg-carmesim {
+  background: linear-gradient(
+    135deg,
+    #7f1d1d,
+    #b91c1c,
+    #dc2626
+  );
+}
+
+/* =========================================
+   09. PÉTALAS
+========================================= */
+
 .petal {
   position: fixed;
-  top: -20px;
+
+  top: -30px;
 
   width: 12px;
-  height: 16px;
+  height: 17px;
 
   background: radial-gradient(
     circle at 30% 30%,
@@ -121,55 +278,143 @@ a:hover {
     var(--petal-dark)
   );
 
-  border-radius: 60% 40% 60% 40%;
+  border-radius: 65% 35% 60% 40%;
 
   opacity: 0;
+
   pointer-events: none;
 
+  z-index: 50;
+
   will-change: transform, opacity;
+
   transform: translate3d(0, 0, 0);
 
-  animation: fall linear forwards;
+  animation: petal-fall linear forwards;
 }
 
-/* 🌑 brilho no dark */
 .dark .petal {
-  filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.5));
+  filter: drop-shadow(
+    0 0 6px rgba(255, 0, 0, 0.35)
+  );
 }
 
-/* =========================
-   🌬️ ANIMAÇÃO
-========================= */
-@keyframes fall {
+@keyframes petal-fall {
+
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    transform:
+      translate3d(0, -5vh, 0)
+      rotate(0deg)
+      scale(0.8);
+
     opacity: 0;
   }
 
   10% {
-    opacity: 0.9;
+    opacity: 0.8;
   }
 
-  50% {
-    transform: translate3d(20px, 50vh, 0) rotate(180deg) scale(1.05);
+  35% {
+    transform:
+      translate3d(25px, 35vh, 0)
+      rotate(130deg)
+      scale(1);
+  }
+
+  65% {
+    transform:
+      translate3d(-25px, 70vh, 0)
+      rotate(260deg)
+      scale(0.95);
   }
 
   100% {
-    transform: translate3d(-20px, 100vh, 0) rotate(360deg) scale(0.9);
+    transform:
+      translate3d(15px, 110vh, 0)
+      rotate(420deg)
+      scale(0.7);
+
     opacity: 0;
   }
 }
 
-/* =========================
-   🧠 ACESSIBILIDADE
-========================= */
-@media (prefers-reduced-motion: reduce) {
-  .petal {
-    animation: none;
-    opacity: 0.4;
+/* =========================================
+   10. ANIMAÇÕES AUXILIARES
+========================================= */
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
   }
 
-  body {
-    transition: none;
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-floating {
+  animation: floating 5s ease-in-out infinite;
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 4s ease-in-out infinite;
+}
+
+/* =========================================
+   11. ACESSIBILIDADE
+========================================= */
+
+:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .petal {
+    display: none;
+  }
+}
+
+/* =========================================
+   12. RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 640px) {
+
+  :root {
+    --font-size-base: 0.95rem;
+  }
+
+  h1 {
+    line-height: 1.1;
+  }
+
+  .petal {
+    width: 9px;
+    height: 13px;
   }
 }
