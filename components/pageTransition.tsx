@@ -1,7 +1,10 @@
+
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useReducedMotion } from "framer-motion";
+
 import "./pageTransition.css";
 
 interface PageTransitionProps {
@@ -14,75 +17,84 @@ export default function PageTransition({
   duration = 650,
 }: PageTransitionProps) {
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
 
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [renderedChildren, setRenderedChildren] =
-    useState<React.ReactNode>(children);
 
-  const timers = useRef<number[]>([]);
-  const firstRender = useRef(true);
+  const previousPathname = useRef(pathname);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /**
-   * 🧹 limpa todos os timers ativos
-   */
-  const clearTimers = useCallback(() => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  }, []);
-
-  /**
-   * ⏱️ agenda timers de forma controlada
-   */
-  const setSafeTimeout = useCallback((fn: () => void, delay: number) => {
-    const id = window.setTimeout(fn, delay);
-    timers.current.push(id);
-    return id;
-  }, []);
-
+  // Limpa qualquer transição anterior
   useEffect(() => {
-    // 🚫 ignora primeira renderização
-    if (firstRender.current) {
-      firstRender.current = false;
-      setRenderedChildren(children);
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  // Controla as transições entre rotas
+  useEffect(() => {
+    if (previousPathname.current === pathname) {
       return;
     }
 
-    clearTimers();
+    previousPathname.current = pathname;
+
+    // Cancela uma transição anterior, caso haja navegação rápida
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    // Respeita a preferência de movimento reduzido
+    if (prefersReducedMotion) {
+      setIsTransitioning(false);
+      return;
+    }
+
+    const safeDuration = Math.max(0, duration);
+
+    if (safeDuration === 0) {
+      setIsTransitioning(false);
+      return;
+    }
+
     setIsTransitioning(true);
 
-    const midPoint = duration * 0.5;
-
-    // 🌗 troca de conteúdo no “meio do flip”
-    setSafeTimeout(() => {
-      setRenderedChildren(children);
-    }, midPoint);
-
-    // 🎭 finaliza transição
-    setSafeTimeout(() => {
+    timerRef.current = setTimeout(() => {
       setIsTransitioning(false);
-    }, duration);
+      timerRef.current = null;
+    }, safeDuration);
 
     return () => {
-      clearTimers();
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     };
-  }, [pathname, children, duration, clearTimers, setSafeTimeout]);
+  }, [pathname, duration, prefersReducedMotion]);
 
   return (
-    <>
-      {/* 🎬 BOOK LAYER */}
+    <div
+      className="page-transition-root"
+      aria-busy={isTransitioning}
+    >
+      {/* Camada cinematográfica */}
       <div
         className={`transition-overlay ${
           isTransitioning ? "active" : ""
         }`}
         style={{
-          transitionDuration: `${duration}ms`,
+          transitionDuration: `${Math.max(0, duration)}ms`,
         }}
+        aria-hidden="true"
       />
 
-      {/* 📄 CONTENT LAYER */}
+      {/* Conteúdo da página */}
       <div className="page-content">
-        {renderedChildren}
+        {children}
       </div>
-    </>
+    </div>
   );
 }
