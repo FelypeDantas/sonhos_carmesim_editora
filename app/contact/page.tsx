@@ -1,9 +1,19 @@
+
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+
+import type {
+  ChangeEvent,
+  FormEvent,
+} from "react";
 
 /* =========================================================
-   🧠 TYPES
+   TYPES
 ========================================================= */
 
 type PublishFormat = "Físico" | "E-book" | "Ambos";
@@ -25,19 +35,16 @@ type BaseFieldProps = {
   name: string;
   value: string;
   placeholder?: string;
+  error?: boolean;
 };
 
 type InputProps = BaseFieldProps & {
   type?: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 type TextareaProps = BaseFieldProps & {
-  onChange: (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => void;
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
 type SelectProps = {
@@ -45,13 +52,12 @@ type SelectProps = {
   name: string;
   value: string;
   options: string[];
-  onChange: (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => void;
+  error?: boolean;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 };
 
 /* =========================================================
-   🎨 STYLES
+   STYLES
 ========================================================= */
 
 const FIELD_STYLES = `
@@ -81,6 +87,9 @@ const FIELD_STYLES = `
 
   hover:border-black/20
   dark:hover:border-white/20
+
+  aria-[invalid=true]:border-red-500
+  aria-[invalid=true]:focus:ring-red-500/10
 `;
 
 const INITIAL_STATE: FormState = {
@@ -96,21 +105,15 @@ const INITIAL_STATE: FormState = {
 };
 
 /* =========================================================
-   🌹 PAGE
+   PAGE
 ========================================================= */
 
 export default function ContactPage() {
-  const [form, setForm] =
-    useState<FormState>(INITIAL_STATE);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState<string | null>(null);
+  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [error, setError] = useState<string | null>(null);
 
   /* =========================================================
-     ✅ VALIDATION
+     VALIDATION
   ========================================================= */
 
   const validate = useCallback(() => {
@@ -125,62 +128,54 @@ export default function ContactPage() {
       form.objetivo,
     ];
 
-    const hasEmptyField =
-      requiredFields.some(
-        (field) => !field.trim()
-      );
-
-    if (hasEmptyField) {
-      return "Preencha todos os campos.";
+    if (requiredFields.some((field) => !field.trim())) {
+      return "Preencha todos os campos antes de continuar.";
     }
 
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = form.email.trim();
 
-    if (!emailRegex.test(form.email)) {
-      return "Digite um email válido.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      return "Digite um endereço de e-mail válido.";
     }
 
     return null;
   }, [form]);
 
   /* =========================================================
-     ✏️ CHANGE
+     CHANGE
   ========================================================= */
-
-  const clearError = () => {
-    if (error) setError(null);
-  };
 
   const handleChange = useCallback(
     (
       e:
-        | React.ChangeEvent<HTMLInputElement>
-        | React.ChangeEvent<HTMLTextAreaElement>
-        | React.ChangeEvent<HTMLSelectElement>
+        | ChangeEvent<HTMLInputElement>
+        | ChangeEvent<HTMLTextAreaElement>
+        | ChangeEvent<HTMLSelectElement>
     ) => {
       const { name, value } = e.target;
 
-      setForm((prev) => ({
-        ...prev,
+      setForm((previous) => ({
+        ...previous,
         [name]: value,
       }));
 
-      clearError();
+      setError(null);
     },
-    [error]
+    []
   );
 
   /* =========================================================
-     💬 WHATSAPP MESSAGE
+     WHATSAPP MESSAGE
   ========================================================= */
 
   const whatsappMessage = useMemo(() => {
     return `🌹 *Novo atendimento editorial*
 
-👤 *Nome:* ${form.nome}
+👤 *Nome:* ${form.nome.trim()}
 
-📧 *Email:* ${form.email}
+📧 *Email:* ${form.email.trim()}
 
 📚 *Gênero do livro:* ${form.genero}
 
@@ -197,7 +192,7 @@ ${form.revisado}
 ${form.possuiCapa}
 
 🎯 *Objetivo com a publicação:*
-${form.objetivo}
+${form.objetivo.trim()}
 
 📎 *Observação:*
 O autor será orientado posteriormente sobre o envio do arquivo da obra.
@@ -205,11 +200,11 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
   }, [form]);
 
   /* =========================================================
-     🚀 SUBMIT
+     SUBMIT
   ========================================================= */
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       const validationError = validate();
@@ -219,31 +214,35 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
         return;
       }
 
-      try {
-        setLoading(true);
+      // Número no formato internacional:
+      // código do país + DDD + número.
+      const phone = "555195885293";
 
-        const phone = "555195885293";
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(
+        whatsappMessage
+      )}`;
 
-        const url = `https://wa.me/${phone}?text=${encodeURIComponent(
-          whatsappMessage
-        )}`;
+      const whatsappWindow = window.open(url, "_blank");
 
-        window.open(url, "_blank");
-
-        setForm(INITIAL_STATE);
-      } catch {
+      if (!whatsappWindow) {
         setError(
-          "Não foi possível enviar o formulário."
+          "O navegador bloqueou a abertura do WhatsApp. Permita pop-ups e tente novamente."
         );
-      } finally {
-        setLoading(false);
+        return;
       }
+
+      // Impede acesso à página original pela nova janela.
+      whatsappWindow.opener = null;
+
+      // Só limpa os campos quando a janela é aberta.
+      setForm(INITIAL_STATE);
+      setError(null);
     },
     [validate, whatsappMessage]
   );
 
   /* =========================================================
-     🎨 UI
+     UI
   ========================================================= */
 
   return (
@@ -264,20 +263,16 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
       "
     >
       <section className="mx-auto max-w-4xl">
+
         {/* HERO */}
         <div className="mb-14 text-center">
           <div
             className="
               inline-flex items-center gap-2
-
               rounded-full
-
               border border-rose-500/20
-
               bg-rose-500/10
-
               px-4 py-2
-
               text-sm font-medium
               text-rose-500
             "
@@ -288,13 +283,10 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
           <h1
             className="
               mt-6
-
               text-4xl font-black
               tracking-tight
-
               text-black
               dark:text-white
-
               md:text-6xl
             "
           >
@@ -304,9 +296,7 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
           <p
             className="
               mx-auto mt-5 max-w-2xl
-
               text-base leading-relaxed
-
               text-black/60
               dark:text-white/60
             "
@@ -322,35 +312,27 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
           onSubmit={handleSubmit}
           className="
             space-y-7
-
             rounded-[2rem]
-
             border border-black/10
             dark:border-white/10
-
             bg-white/70
             dark:bg-zinc-900/40
-
             p-8 md:p-10
-
             shadow-2xl
             shadow-black/5
-
             backdrop-blur-2xl
           "
         >
           {/* ERROR */}
           {error && (
             <div
+              role="alert"
+              aria-live="assertive"
               className="
                 rounded-2xl
-
                 border border-red-500/20
-
                 bg-red-500/10
-
                 px-4 py-4
-
                 text-sm font-medium
                 text-red-500
               "
@@ -359,7 +341,7 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
             </div>
           )}
 
-          {/* GRID */}
+          {/* IDENTIFICAÇÃO */}
           <div className="grid gap-6 md:grid-cols-2">
             <Input
               label="Seu nome"
@@ -379,6 +361,7 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
             />
           </div>
 
+          {/* OBRA */}
           <Input
             label="Qual é o gênero do livro?"
             name="genero"
@@ -420,6 +403,7 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
             ]}
           />
 
+          {/* SERVIÇOS */}
           <div className="grid gap-6 md:grid-cols-2">
             <SelectField
               label="Já passou por revisão profissional?"
@@ -452,71 +436,53 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
             onChange={handleChange}
           />
 
-          {/* INFO */}
+          {/* INFORMATION */}
           <div
             className="
               rounded-2xl
-
               border border-amber-500/20
-
               bg-amber-500/10
-
               px-5 py-4
-
               text-sm leading-relaxed
-
               text-amber-600
               dark:text-amber-400
             "
           >
-            📎 O envio do arquivo da obra será
-            solicitado posteriormente durante o
-            atendimento editorial.
+            📎 O envio do arquivo da obra será solicitado
+            posteriormente durante o atendimento editorial.
           </div>
 
           {/* BUTTON */}
           <button
             type="submit"
-            disabled={loading}
             className="
               group relative overflow-hidden
-
               w-full rounded-2xl
-
               bg-gradient-to-r
               from-rose-500
               to-pink-500
-
               px-6 py-4
-
               font-bold text-white
-
               transition-all duration-300
-
               hover:scale-[1.01]
               hover:shadow-2xl
               hover:shadow-rose-500/20
-
-              disabled:cursor-not-allowed
-              disabled:opacity-60
+              focus-visible:outline-none
+              focus-visible:ring-4
+              focus-visible:ring-rose-500/30
             "
           >
             <span className="relative z-10">
-              {loading
-                ? "Enviando..."
-                : "Enviar atendimento 💬"}
+              Enviar atendimento 💬
             </span>
 
             <div
+              aria-hidden="true"
               className="
                 absolute inset-0
-
                 translate-y-full
-
                 bg-white/10
-
                 transition-transform duration-300
-
                 group-hover:translate-y-0
               "
             />
@@ -528,7 +494,7 @@ O autor será orientado posteriormente sobre o envio do arquivo da obra.
 }
 
 /* =========================================================
-   🧩 INPUT
+   INPUT
 ========================================================= */
 
 function Input({
@@ -539,12 +505,14 @@ function Input({
   type = "text",
   onChange,
 }: InputProps) {
+  const id = `field-${name}`;
+
   return (
     <div className="space-y-3">
       <label
+        htmlFor={id}
         className="
-          text-sm font-medium
-
+          block text-sm font-medium
           text-black/70
           dark:text-white/70
         "
@@ -553,11 +521,20 @@ function Input({
       </label>
 
       <input
+        id={id}
         type={type}
         name={name}
         value={value}
         placeholder={placeholder}
         onChange={onChange}
+        required
+        autoComplete={
+          name === "nome"
+            ? "name"
+            : name === "email"
+              ? "email"
+              : "off"
+        }
         className={FIELD_STYLES}
       />
     </div>
@@ -565,7 +542,7 @@ function Input({
 }
 
 /* =========================================================
-   🧩 TEXTAREA
+   TEXTAREA
 ========================================================= */
 
 function Textarea({
@@ -575,12 +552,14 @@ function Textarea({
   placeholder,
   onChange,
 }: TextareaProps) {
+  const id = `field-${name}`;
+
   return (
     <div className="space-y-3">
       <label
+        htmlFor={id}
         className="
-          text-sm font-medium
-
+          block text-sm font-medium
           text-black/70
           dark:text-white/70
         "
@@ -589,11 +568,13 @@ function Textarea({
       </label>
 
       <textarea
+        id={id}
         rows={6}
         name={name}
         value={value}
         placeholder={placeholder}
         onChange={onChange}
+        required
         className={`${FIELD_STYLES} resize-none`}
       />
     </div>
@@ -601,7 +582,7 @@ function Textarea({
 }
 
 /* =========================================================
-   🧩 SELECT
+   SELECT
 ========================================================= */
 
 function SelectField({
@@ -611,12 +592,14 @@ function SelectField({
   options,
   onChange,
 }: SelectProps) {
+  const id = `field-${name}`;
+
   return (
     <div className="space-y-3">
       <label
+        htmlFor={id}
         className="
-          text-sm font-medium
-
+          block text-sm font-medium
           text-black/70
           dark:text-white/70
         "
@@ -625,12 +608,14 @@ function SelectField({
       </label>
 
       <select
+        id={id}
         name={name}
         value={value}
         onChange={onChange}
+        required
         className={FIELD_STYLES}
       >
-        <option value="">
+        <option value="" disabled>
           Selecione uma opção
         </option>
 
@@ -640,7 +625,6 @@ function SelectField({
             value={option}
             className="
               bg-white text-black
-
               dark:bg-zinc-950
               dark:text-white
             "
