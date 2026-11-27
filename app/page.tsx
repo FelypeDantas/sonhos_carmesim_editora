@@ -201,6 +201,8 @@ export default function Home() {
 
             </motion.div>
 
+          </div>
+
               <div className="absolute bottom-[8%] left-[5%] hidden rounded-xl border border-red-700/20 bg-white/70 px-5 py-3 shadow-xl backdrop-blur-xl dark:bg-zinc-950/70 sm:block">
                 <p className="text-xs uppercase tracking-[0.2em] text-red-600">
                    Nossa essência
@@ -209,8 +211,6 @@ export default function Home() {
                    Sonhos não têm limites.
                  </p>
               </div>
-
-          </div>
 
           {/* SCROLL */}
           <motion.div
