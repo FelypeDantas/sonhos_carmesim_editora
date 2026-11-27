@@ -1,49 +1,165 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+
+const IMAGES = [
+  "/portfolio/capa-4.jpeg",
+  "/portfolio/capa-4_1.jpeg",
+];
+
+const INTERVAL = 3000;
 
 export function StoryImage() {
   const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(false);
 
-  const images = [
-    "/portfolio/capa-4.jpeg",
-    "/portfolio/capa-4_1.jpeg", // altere a extensão se necessário
-  ];
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 3000); // troca a cada 3 segundos
+    const container = containerRef.current;
 
-    return () => clearInterval(interval);
+    if (!container) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
+
+    if (reducedMotion.matches) return;
+
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const start = () => {
+      if (interval !== null) return;
+
+      setProgress(true);
+
+      interval = setInterval(() => {
+        setCurrent((previous) => (previous + 1) % IMAGES.length);
+      }, INTERVAL);
+    };
+
+    const stop = () => {
+      if (interval !== null) {
+        clearInterval(interval);
+        interval = null;
+      }
+
+      setProgress(false);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          start();
+        } else {
+          stop();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(container);
+
+    const handleMotionChange = () => {
+      if (reducedMotion.matches) {
+        stop();
+      } else if (
+        container.getBoundingClientRect().bottom > 0 &&
+        container.getBoundingClientRect().top < window.innerHeight
+      ) {
+        start();
+      }
+    };
+
+    reducedMotion.addEventListener("change", handleMotionChange);
+
+    return () => {
+      observer.disconnect();
+      reducedMotion.removeEventListener("change", handleMotionChange);
+      stop();
+    };
   }, []);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
-      {images.map((image, index) => (
+    <div
+      ref={containerRef}
+      className="
+        relative
+        w-full
+        h-full
+        overflow-hidden
+        bg-zinc-950
+      "
+      aria-label="Prévia de duas versões da capa"
+    >
+      {/* IMAGENS */}
+      {IMAGES.map((image, index) => (
         <Image
           key={image}
           src={image}
-          alt="Capa 4"
+          alt={`Versão ${index + 1} da capa`}
           fill
-          className={`absolute inset-0 object-cover transition-opacity duration-700 ${
-            current === index ? "opacity-100" : "opacity-0"
-          }`}
+          priority={index === 0}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className={`
+            absolute
+            inset-0
+            object-cover
+            transition-opacity
+            duration-700
+            motion-reduce:transition-none
+            ${
+              current === index
+                ? "opacity-100"
+                : "opacity-0"
+            }
+          `}
         />
       ))}
 
-      {/* Barra de progresso igual ao Stories */}
-      <div className="absolute top-2 left-2 right-2 flex gap-1 z-20">
-        {images.map((_, index) => (
+      {/* INDICADORES DE PROGRESSO */}
+      <div
+        className="
+          absolute
+          top-3
+          left-3
+          right-3
+          z-20
+          flex
+          gap-1.5
+        "
+        aria-hidden="true"
+      >
+        {IMAGES.map((_, index) => (
           <div
             key={index}
-            className="flex-1 h-1 rounded-full bg-white/30 overflow-hidden"
+            className="
+              relative
+              flex-1
+              h-1
+              rounded-full
+              overflow-hidden
+              bg-white/35
+            "
           >
             <div
-              className={`h-full bg-white transition-all ${
-                current === index ? "w-full duration-[3000]" : "w-0 duration-300"
-              }`}
+              className={`
+                absolute
+                inset-y-0
+                left-0
+                bg-white
+                rounded-full
+                transition-[width]
+                ${
+                  current > index
+                    ? "w-full duration-300"
+                    : current === index && progress
+                      ? "w-full duration-[3000ms]"
+                      : "w-0 duration-300"
+                }
+              `}
             />
           </div>
         ))}
