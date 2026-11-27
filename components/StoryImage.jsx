@@ -15,7 +15,7 @@ export function StoryImage() {
   const [current, setCurrent] = useState(0);
   const [progress, setProgress] = useState(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -26,19 +26,8 @@ export function StoryImage() {
       "(prefers-reduced-motion: reduce)"
     );
 
-    if (reducedMotion.matches) return;
-
-    let interval: ReturnType<typeof setInterval> | null = null;
-
-    const start = () => {
-      if (interval !== null) return;
-
-      setProgress(true);
-
-      interval = setInterval(() => {
-        setCurrent((previous) => (previous + 1) % IMAGES.length);
-      }, INTERVAL);
-    };
+    let interval = null;
+    let isVisible = false;
 
     const stop = () => {
       if (interval !== null) {
@@ -49,9 +38,21 @@ export function StoryImage() {
       setProgress(false);
     };
 
+    const start = () => {
+      if (interval !== null || reducedMotion.matches) return;
+
+      setProgress(true);
+
+      interval = setInterval(() => {
+        setCurrent((previous) => (previous + 1) % IMAGES.length);
+      }, INTERVAL);
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        isVisible = entry.isIntersecting;
+
+        if (isVisible) {
           start();
         } else {
           stop();
@@ -60,18 +61,15 @@ export function StoryImage() {
       { threshold: 0.2 }
     );
 
-    observer.observe(container);
-
     const handleMotionChange = () => {
       if (reducedMotion.matches) {
         stop();
-      } else if (
-        container.getBoundingClientRect().bottom > 0 &&
-        container.getBoundingClientRect().top < window.innerHeight
-      ) {
+      } else if (isVisible) {
         start();
       }
     };
+
+    observer.observe(container);
 
     reducedMotion.addEventListener("change", handleMotionChange);
 
@@ -145,6 +143,7 @@ export function StoryImage() {
             "
           >
             <div
+              key={`${current}-${index}`}
               className={`
                 absolute
                 inset-y-0
