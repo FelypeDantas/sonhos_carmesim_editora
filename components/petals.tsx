@@ -1,119 +1,137 @@
+
 "use client";
 
-import {
-useCallback,
-useEffect,
-useRef,
-useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Petal {
-id: number;
-left: number;
-size: number;
-duration: number;
-rotation: number;
-opacity: number;
-delay: number;
+  id: number;
+  left: number;
+  size: number;
+  duration: number;
+  rotation: number;
+  opacity: number;
+  delay: number;
 }
 
-const MAX_PETALS = 40;
-const SPAWN_INTERVAL = 450;
+const MAX_PETALS = 28;
+const SPAWN_INTERVAL = 600;
 
 export function Petals() {
-const [petals, setPetals] = useState<Petal[]>([]);
+  const [petals, setPetals] = useState<Petal[]>([]);
+  const [motionAllowed, setMotionAllowed] = useState(false);
 
-const idRef = useRef(0);
-const timeoutsRef = useRef<number[]>([]);
+  const idRef = useRef(0);
 
-const clearAllTimeouts = useCallback(() => {
-timeoutsRef.current.forEach(window.clearTimeout);
-timeoutsRef.current = [];
-}, []);
+  const timeoutsRef = useRef(
+    new Map<number, ReturnType<typeof setTimeout>>()
+  );
 
-const createPetal = useCallback((): Petal => {
-return {
-id: idRef.current++,
-left: Math.random() * 100,
+  // Monitora a preferência de movimento do dispositivo
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    );
 
-  size: 10 + Math.random() * 14,
+    const updateMotionPreference = () => {
+      setMotionAllowed(!mediaQuery.matches);
+    };
 
-  duration: 6 + Math.random() * 4,
+    updateMotionPreference();
 
-  rotation: Math.random() * 360,
+    mediaQuery.addEventListener("change", updateMotionPreference);
 
-  opacity: 0.4 + Math.random() * 0.5,
+    return () => {
+      mediaQuery.removeEventListener(
+        "change",
+        updateMotionPreference
+      );
+    };
+  }, []);
 
-  delay: Math.random() * 0.5,
-};
-
-}, []);
-
-useEffect(() => {
-const reducedMotion = window.matchMedia(
-"(prefers-reduced-motion: reduce)"
-).matches;
-if (reducedMotion) {
-  return;
-}
-
-const interval = window.setInterval(() => {
-  const petal = createPetal();
-
-  setPetals((prev) => {
-    const next = [...prev, petal];
-
-    if (next.length > MAX_PETALS) {
-      return next.slice(-MAX_PETALS);
+  // Gerencia a criação e remoção das pétalas
+  useEffect(() => {
+    if (!motionAllowed) {
+      setPetals([]);
+      return;
     }
 
-    return next;
-  });
+    let interval: ReturnType<typeof setInterval>;
 
-  const timeout = window.setTimeout(() => {
-    setPetals((prev) =>
-      prev.filter((p) => p.id !== petal.id)
-    );
-  }, petal.duration * 1000);
+    const createPetal = (): Petal => ({
+      id: idRef.current++,
+      left: Math.random() * 100,
+      size: 10 + Math.random() * 14,
+      duration: 8 + Math.random() * 4,
+      rotation: Math.random() * 360,
+      opacity: 0.35 + Math.random() * 0.4,
+      delay: Math.random() * 0.5,
+    });
 
-  timeoutsRef.current.push(timeout);
-}, SPAWN_INTERVAL);
+    const spawnPetal = () => {
+      const petal = createPetal();
 
-return () => {
-  clearInterval(interval);
-  clearAllTimeouts();
-};
+      setPetals((previous) => [
+        ...previous.slice(-(MAX_PETALS - 1)),
+        petal,
+      ]);
 
-}, [createPetal, clearAllTimeouts]);
+      const timeout = setTimeout(() => {
+        timeoutsRef.current.delete(petal.id);
 
-return ( <div
-   className="
-     fixed
-     inset-0
-     z-10
-     overflow-hidden
-     pointer-events-none
-   "
-   aria-hidden="true"
- >
-{petals.map((petal) => (
-<div
-key={petal.id}
-className="petal absolute top-[-30px] will-change-transform"
-style={{
-left: `${petal.left}vw`,
-        width: `${petal.size}px`,
-        height: `${petal.size * 1.4}px`,
+        setPetals((previous) =>
+          previous.filter((item) => item.id !== petal.id)
+        );
+      }, (petal.duration + petal.delay) * 1000);
 
-        opacity: petal.opacity,
+      timeoutsRef.current.set(petal.id, timeout);
+    };
 
-        transform: `rotate(${petal.rotation}deg)`,
+    interval = setInterval(spawnPetal, SPAWN_INTERVAL);
 
-        animationDuration: `${petal.duration}s`,
-        animationDelay: `${petal.delay}s`,
-      }}
-    />
-  ))}
-</div>
-);
+    return () => {
+      clearInterval(interval);
+
+      timeoutsRef.current.forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+
+      timeoutsRef.current.clear();
+    };
+  }, [motionAllowed]);
+
+  if (!motionAllowed) return null;
+
+  return (
+    <div
+      className="
+        pointer-events-none
+        fixed inset-0
+        z-[1]
+        overflow-hidden
+        select-none
+      "
+      aria-hidden="true"
+    >
+      {petals.map((petal) => (
+        <div
+          key={petal.id}
+          className="
+            petal
+            absolute
+            top-[-30px]
+            will-change-transform
+          "
+          style={{
+            left: `${petal.left}vw`,
+            width: `${petal.size}px`,
+            height: `${petal.size * 1.4}px`,
+            opacity: petal.opacity,
+            rotate: `${petal.rotation}deg`,
+            animationDuration: `${petal.duration}s`,
+            animationDelay: `${petal.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
 }
