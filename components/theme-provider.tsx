@@ -1,3 +1,4 @@
+
 "use client";
 
 import { ThemeProvider } from "next-themes";
@@ -12,6 +13,7 @@ export function AppThemeProvider({
       attribute="class"
       defaultTheme="system"
       enableSystem
+      disableTransitionOnChange={false}
       {...props}
     >
       {children}
